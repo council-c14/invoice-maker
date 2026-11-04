@@ -183,8 +183,11 @@ dialog::backdrop{background:rgba(28,28,24,.35)}
 .paper .tot td{padding:4px 0}
 .paper .pre{white-space:pre-line}
 .paper .stamp{position:absolute;top:62mm;right:20mm;transform:rotate(-12deg);border:2.5px solid #2f7a55;color:#2f7a55;padding:4px 14px;font-weight:800;letter-spacing:.18em;font-size:20pt;border-radius:4px;opacity:.8}
-.paper .sign{display:grid;grid-template-columns:1fr 1fr;gap:20mm;margin-top:16mm}
-.paper .sign div{border-top:1px solid #9a9a94;padding-top:4px;font-size:8.5pt;color:#6b6b66}
+.paper .sign{width:80mm;margin-top:14mm;break-inside:avoid}
+.paper .sign-label{font-weight:600;font-size:9pt}
+.paper .sign-line{border-top:1px solid #9a9a94;padding-top:1.5mm;font-size:8pt;color:#6b6b66}
+.paper .sign-line.signature{margin-top:16mm}
+.paper .sign-line.name{margin-top:10mm}
 .paper .logo{max-height:18mm;max-width:50mm;display:block}
 
 /* Template: Classic */
@@ -357,24 +360,28 @@ const METHODS = ['Bank transfer', 'Cash', 'Card', 'Cheque', 'Other'];
 const cust = id => db.customers.find(c => c.id === id) || { name: 'Unknown customer' };
 const docLabel = t => t === 'quote' ? 'Quotation' : 'Invoice';
 
-/* ---------- server ---------- */
-async function api(path = '', opts = {}) {
-  const res = await fetch(`/api/billing${path ? '/' + path : ''}`, {
-    method: opts.method || 'GET',
-    headers: { 'Content-Type': 'application/json' },
-    body: opts.body ? JSON.stringify(opts.body) : undefined,
-  });
-  if (!res.ok) throw new Error(`HTTP ${res.status}`);
-  return res.json();
+/* ---------- storage: this browser only ---------- */
+// Records never leave the device. Each browser keeps its own copy, so people sharing the link can't see each other's data.
+// ponytail: localStorage holds about 5 MB (thousands of documents); move to IndexedDB if that runs out.
+const KEY = 'invoice-maker:v1';
+const listOf = kind => (kind === 'doc' ? 'docs' : 'customers');
+function store(next) {
+  try { localStorage.setItem(KEY, JSON.stringify(next)); return true; }
+  catch { toast('Could not save: this browser’s storage is full or blocked. Download a backup from Business settings.'); return false; }
 }
-// Every write goes through here so the screen and the server can't drift silently.
+function readStore() {
+  const d = JSON.parse(localStorage.getItem(KEY) || 'null') || {};
+  return { customers: d.customers || [], docs: d.docs || [], settings: d.settings || {} };
+}
+// Every write goes through here; callers update the screen only after it succeeds.
 async function persist(kind, rec) {
-  try { await api(`${kind}/${rec.id}`, { method: 'PUT', body: rec }); return true; }
-  catch { toast('Could not save. Check your connection and try again.'); return false; }
+  if (kind === 'settings') return store({ ...db, settings: rec });
+  const list = [...db[listOf(kind)]];
+  upsert(list, rec);
+  return store({ ...db, [listOf(kind)]: list });
 }
 async function destroy(kind, id) {
-  try { await api(`${kind}/${id}`, { method: 'DELETE' }); return true; }
-  catch { toast('Could not delete. Check your connection and try again.'); return false; }
+  return store({ ...db, [listOf(kind)]: db[listOf(kind)].filter(x => x.id !== id) });
 }
 function upsert(list, rec) { const i = list.findIndex(x => x.id === rec.id); i < 0 ? list.push(rec) : (list[i] = rec); }
 
@@ -483,7 +490,7 @@ function billTo(c) {
     ${contactLine(c) ? `<br>${contactLine(c)}` : ''}${c.taxId ? `<br>TIN ${esc(c.taxId)}` : ''}`;
 }
 const logoImg = s => s.logo ? `<img class="logo" src="${esc(s.logo)}" alt="">` : '';
-const signBlock = d => d.type === 'quote' ? `<div class="sign"><div>Accepted by (name &amp; signature)</div><div>Date</div></div>` : '';
+const signBlock = () => `<div class="sign"><div class="sign-label">Approved by</div><div class="sign-line signature">Signature</div><div class="sign-line name">Name &amp; contact</div></div>`;
 const stamp = d => d.type === 'invoice' && status(d) === 'paid' ? '<div class="stamp">PAID</div>' : '';
 
 function renderDoc(d, tpl = d.template, c = cust(d.customerId)) {
@@ -1181,9 +1188,11 @@ function vSettings() {
         <label class="f span2">Payment details <span class="hint">Bank name, account number, SWIFT. Printed on invoices and statements.</span><textarea name="bank" rows="3">${v('bank')}</textarea></label>
       </div></div>
       <div class="card"><div class="card-head"><h2>Data</h2></div><div class="card-body" style="display:flex;align-items:center;justify-content:space-between;gap:12px;flex-wrap:wrap">
-        <span class="muted">${db.customers.length} customers, ${db.docs.length} documents stored.</span><button type="button" class="btn" data-act="backup">${ICON.down}Download backup (JSON)</button></div></div>
+        <span class="muted">${db.customers.length} customers and ${db.docs.length} documents, saved only in this browser on this device. Clearing browser data deletes them, so download a backup regularly.</span>
+        <div class="actions"><label class="btn">Restore backup<input type="file" accept="application/json,.json" id="restore" hidden></label><button type="button" class="btn" data-act="backup">${ICON.down}Download backup (JSON)</button></div></div></div>
     </form>`;
   let logo = s.logo;
+  $('#restore').onchange = e => { const f = e.target.files[0]; e.target.value = ''; if (f) restoreBackup(f); };
   $('#logo').onchange = e => {
     const f = e.target.files[0]; if (!f) return;
     if (f.size > 300 * 1024) return toast('That logo is over 300 KB. Export a smaller PNG or JPG.');
@@ -1209,6 +1218,17 @@ async function saveSettings(patch) {
   if (!await persist('settings', { ...rec, id: 'main' })) return;
   db.settings = rec; dirty = false;
   paintBrand(); toast('Settings saved'); route();
+}
+
+async function restoreBackup(file) {
+  let d;
+  try { d = JSON.parse(await file.text()); } catch { return toast('That file isn’t a backup from this app.'); }
+  if (!d || !Array.isArray(d.customers) || !Array.isArray(d.docs)) return toast('That file isn’t a backup from this app.');
+  if (!await confirmBox('Restore this backup?', `It has ${d.customers.length} customers and ${d.docs.length} documents. Everything currently on this device is replaced.`, 'Replace and restore')) return;
+  const next = { customers: d.customers, docs: d.docs, settings: d.settings && typeof d.settings === 'object' ? d.settings : {} };
+  if (!store(next)) return;
+  db = next; dirty = false;
+  paintBrand(); toast('Backup restored'); route();
 }
 
 function notFound() { main().innerHTML = empty('Not found', 'This record may have been deleted.', '<a class="btn" href="#/">Back to overview</a>'); }
@@ -1279,18 +1299,22 @@ document.addEventListener('click', async e => {
   return docAction(act, v);
 });
 
-(async function boot() {
-  try {
-    const d = await api();
-    db = { customers: d.customers || [], docs: d.docs || [], settings: d.settings || {} };
-  } catch {
-    main().innerHTML = empty('Can’t reach the server', 'Your data is safe. Check your connection and reload the page.', '<button class="btn" onclick="location.reload()">Reload</button>');
+(function boot() {
+  try { db = readStore(); }
+  catch {
+    main().innerHTML = empty('This browser is blocking storage', 'Invoice Maker saves your records in the browser. Allow site data for this page, or leave private browsing, then reload.', '<button class="btn" onclick="location.reload()">Reload</button>');
     return;
   }
+  navigator.storage?.persist?.(); // asks the browser not to clear the records when space runs low
   paintBrand();
-  $('#side-foot').textContent = `${S().currency} · ${S().taxLabel} ${S().taxRate}%`;
+  $('#side-foot').textContent = 'Saved on this device only';
   route();
 })();
+// Another tab saved: pick up its changes, unless this tab is mid-edit.
+window.addEventListener('storage', e => {
+  if (e.key !== KEY || dirty) return;
+  try { db = readStore(); paintBrand(); route(); } catch {}
+});
 </script>
 </body>
 </html>
