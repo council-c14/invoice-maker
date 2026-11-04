@@ -24,6 +24,8 @@ Build (JDK 17+, Android SDK with `platforms;android-36` and `build-tools;36.0.0`
 ANDROID_HOME=~/android-sdk KEYSTORE=~/invoice-maker.jks KEYSTORE_PASS=... VERSION_CODE=2 VERSION_NAME=1.1 android/build.sh
 ```
 
+`build.sh` also copies the APK to `public/invoice-maker.apk`, which the website offers under **Android app**.
+
 The keystore is not in this repo. Every update must be signed with the same keystore,
 otherwise Android refuses to install it over the old app.
 

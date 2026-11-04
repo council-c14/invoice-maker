@@ -23,4 +23,5 @@ javac -Xlint:-options --release 11 -classpath "$JAR" -d build/classes $(find src
 "$BT/zipalign" -f -p 4 build/unsigned.apk build/aligned.apk
 "$BT/apksigner" sign --ks "$KEYSTORE" --ks-pass "pass:$KEYSTORE_PASS" --out build/invoice-maker.apk build/aligned.apk
 "$BT/apksigner" verify build/invoice-maker.apk
-echo "Built android/build/invoice-maker.apk"
+cp build/invoice-maker.apk ../public/invoice-maker.apk # the website's download link
+echo "Built android/build/invoice-maker.apk and copied it to public/"

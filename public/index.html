@@ -464,6 +464,7 @@ dialog::backdrop{background:rgba(28,28,24,.35)}
       <div class="nav-label">Setup</div>
       <a href="#/templates" data-nav="templates"><svg viewBox="0 0 24 24"><rect x="3" y="3" width="7" height="9"/><rect x="14" y="3" width="7" height="5"/><rect x="14" y="12" width="7" height="9"/><rect x="3" y="16" width="7" height="5"/></svg>Templates</a>
       <a href="#/settings" data-nav="settings"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.7 1.7 0 00.3 1.8l.1.1a2 2 0 11-2.8 2.8l-.1-.1a1.7 1.7 0 00-1.8-.3 1.7 1.7 0 00-1 1.5V21a2 2 0 11-4 0v-.1a1.7 1.7 0 00-1.1-1.5 1.7 1.7 0 00-1.8.3l-.1.1a2 2 0 11-2.8-2.8l.1-.1a1.7 1.7 0 00.3-1.8 1.7 1.7 0 00-1.5-1H3a2 2 0 110-4h.1a1.7 1.7 0 001.5-1.1 1.7 1.7 0 00-.3-1.8l-.1-.1a2 2 0 112.8-2.8l.1.1a1.7 1.7 0 001.8.3H9a1.7 1.7 0 001-1.5V3a2 2 0 114 0v.1a1.7 1.7 0 001 1.5 1.7 1.7 0 001.8-.3l.1-.1a2 2 0 112.8 2.8l-.1.1a1.7 1.7 0 00-.3 1.8V9a1.7 1.7 0 001.5 1H21a2 2 0 110 4h-.1a1.7 1.7 0 00-1.5 1z"/></svg>Business settings</a>
+      <a href="invoice-maker.apk" download="Invoice-Maker.apk" data-nav="apk" id="apk-link" title="Download Invoice Maker for Android (APK)"><svg viewBox="0 0 24 24"><rect x="6" y="2" width="12" height="20" rx="2"/><path d="M12 7v7M9 11l3 3 3-3M10 18h4"/></svg>Android app</a>
     </nav>
     <div class="side-foot" id="side-foot"></div>
   </aside>
@@ -1558,6 +1559,7 @@ document.addEventListener('click', async e => {
   }
   navigator.storage?.persist?.(); // asks the browser not to clear the records when space runs low
   paintBrand();
+  if (window.AndroidBridge) $('#apk-link').remove(); // already in the app
   $('#side-foot').textContent = 'Saved on this device only';
   route();
 })();
