@@ -186,8 +186,9 @@ dialog::backdrop{background:rgba(28,28,24,.35)}
 .paper .sign{width:80mm;margin-top:14mm;break-inside:avoid}
 .paper .sign-label{font-weight:600;font-size:9pt}
 .paper .sign-line{border-top:1px solid #9a9a94;padding-top:1.5mm;font-size:8pt;color:#6b6b66}
-.paper .sign-line.signature{margin-top:16mm}
-.paper .sign-line.name{margin-top:10mm}
+.paper .sign-space{height:18mm;display:flex;align-items:flex-end;padding-bottom:1mm}
+.paper .sign-space img{max-height:16mm;max-width:60mm}
+.paper .sign-name{min-height:10mm;display:flex;align-items:flex-end;padding-bottom:1mm;font-size:9pt}
 .paper .logo{max-height:18mm;max-width:50mm;display:block}
 
 /* Template: Classic */
@@ -347,7 +348,7 @@ const DEFAULTS = {
   name: 'Your Business', address: '', phone: '', email: '', website: '', taxId: '',
   currency: 'MVR', taxLabel: 'GST', taxRate: 8, invoicePrefix: 'INV-', quotePrefix: 'QT-',
   dueDays: 30, validDays: 14, invoiceTemplate: 'classic', quoteTemplate: 'modern', accent: '#1f5c4a',
-  logo: '', notes: 'Thank you for your business.', terms: '', bank: '',
+  logo: '', approverName: '', approverContact: '', approverSign: '', notes: 'Thank you for your business.', terms: '', bank: '',
 };
 const S = () => ({ ...DEFAULTS, ...db.settings });
 const TEMPLATES = { classic: 'Classic', modern: 'Modern', minimal: 'Minimal' };
@@ -490,7 +491,12 @@ function billTo(c) {
     ${contactLine(c) ? `<br>${contactLine(c)}` : ''}${c.taxId ? `<br>TIN ${esc(c.taxId)}` : ''}`;
 }
 const logoImg = s => s.logo ? `<img class="logo" src="${esc(s.logo)}" alt="">` : '';
-const signBlock = () => `<div class="sign"><div class="sign-label">Approved by</div><div class="sign-line signature">Signature</div><div class="sign-line name">Name &amp; contact</div></div>`;
+function signBlock() {
+  const s = S(), who = [s.approverName, s.approverContact].filter(Boolean).map(esc).join(' · ');
+  return `<div class="sign"><div class="sign-label">Approved by</div>
+    <div class="sign-space">${s.approverSign ? `<img src="${esc(s.approverSign)}" alt="Signature">` : ''}</div><div class="sign-line">Signature</div>
+    <div class="sign-name">${who}</div><div class="sign-line">Name &amp; contact</div></div>`;
+}
 const stamp = d => d.type === 'invoice' && status(d) === 'paid' ? '<div class="stamp">PAID</div>' : '';
 
 function renderDoc(d, tpl = d.template, c = cust(d.customerId)) {
@@ -1169,7 +1175,14 @@ function vSettings() {
         <label class="f">Address<textarea name="address" rows="3">${v('address')}</textarea></label>
         <div class="f"><span style="font-size:12px;font-weight:500;color:var(--ink-2)">Logo <span class="hint">PNG or JPG, up to 300 KB</span></span>
           <div style="display:flex;align-items:center;gap:12px;margin-top:5px"><div id="logo-prev" style="width:120px;height:56px;border:1px dashed var(--line-2);border-radius:6px;display:grid;place-items:center;background:#fafaf8">${s.logo ? `<img src="${esc(s.logo)}" style="max-width:110px;max-height:48px">` : '<span class="muted small">No logo</span>'}</div>
-          <label class="btn sm">Upload<input type="file" accept="image/png,image/jpeg,image/webp" id="logo" hidden></label>${s.logo ? '<button type="button" class="btn sm ghost" data-act="logo-clear">Remove</button>' : ''}</div></div>
+          <label class="btn sm">Upload<input type="file" accept="image/png,image/jpeg,image/webp" id="logo" hidden></label>${s.logo ? '<button type="button" class="btn sm ghost" data-act="img-clear" data-v="logo">Remove</button>' : ''}</div></div>
+      </div></div>
+      <div class="card"><div class="card-head"><h2>Approval</h2><span class="muted small">Printed in the Approved by block on quotations and invoices</span></div><div class="card-body grid2">
+        <label class="f">Approved by <span class="hint">Name</span><input name="approverName" value="${v('approverName')}" maxlength="80"></label>
+        <label class="f">Approver contact <span class="hint">Phone or email</span><input name="approverContact" value="${v('approverContact')}" maxlength="120"></label>
+        <div class="f"><span style="font-size:12px;font-weight:500;color:var(--ink-2)">Approver signature <span class="hint">PNG with a transparent or white background, up to 300 KB</span></span>
+          <div style="display:flex;align-items:center;gap:12px;margin-top:5px"><div id="approverSign-prev" style="width:120px;height:56px;border:1px dashed var(--line-2);border-radius:6px;display:grid;place-items:center;background:#fafaf8">${s.approverSign ? `<img src="${esc(s.approverSign)}" style="max-width:110px;max-height:48px">` : '<span class="muted small">No signature</span>'}</div>
+          <label class="btn sm">Upload<input type="file" accept="image/png,image/jpeg,image/webp" id="approverSign" hidden></label>${s.approverSign ? '<button type="button" class="btn sm ghost" data-act="img-clear" data-v="approverSign">Remove</button>' : ''}</div></div>
       </div></div>
       <div class="card"><div class="card-head"><h2>Tax &amp; currency</h2></div><div class="card-body grid4">
         <label class="f">Currency code<input name="currency" value="${v('currency')}" maxlength="3" style="text-transform:uppercase"></label>
@@ -1191,18 +1204,19 @@ function vSettings() {
         <span class="muted">${db.customers.length} customers and ${db.docs.length} documents, saved only in this browser on this device. Clearing browser data deletes them, so download a backup regularly.</span>
         <div class="actions"><label class="btn">Restore backup<input type="file" accept="application/json,.json" id="restore" hidden></label><button type="button" class="btn" data-act="backup">${ICON.down}Download backup (JSON)</button></div></div></div>
     </form>`;
-  let logo = s.logo;
-  $('#restore').onchange = e => { const f = e.target.files[0]; e.target.value = ''; if (f) restoreBackup(f); };
-  $('#logo').onchange = e => {
+  const images = { logo: s.logo, approverSign: s.approverSign };
+  const preview = key => ($(`#${key}-prev`).innerHTML = images[key] ? `<img src="${esc(images[key])}" style="max-width:110px;max-height:48px">` : '<span class="muted small">None</span>');
+  for (const key of Object.keys(images)) $('#' + key).onchange = e => {
     const f = e.target.files[0]; if (!f) return;
-    if (f.size > 300 * 1024) return toast('That logo is over 300 KB. Export a smaller PNG or JPG.');
+    if (f.size > 300 * 1024) return toast('That image is over 300 KB. Export a smaller PNG or JPG.');
     const r = new FileReader();
-    r.onload = () => { logo = r.result; $('#logo-prev').innerHTML = `<img src="${esc(logo)}" style="max-width:110px;max-height:48px">`; dirty = true; };
+    r.onload = () => { images[key] = r.result; preview(key); dirty = true; };
     r.readAsDataURL(f);
   };
+  $('#restore').onchange = e => { const f = e.target.files[0]; e.target.value = ''; if (f) restoreBackup(f); };
   $('#settings').oninput = () => (dirty = true);
-  vSettings.logo = () => logo;
-  vSettings.clearLogo = () => { logo = ''; $('#logo-prev').innerHTML = '<span class="muted small">No logo</span>'; dirty = true; };
+  vSettings.images = () => images;
+  vSettings.clearImage = key => { images[key] = ''; preview(key); dirty = true; };
 }
 async function saveSettings(patch) {
   let rec;
@@ -1213,7 +1227,8 @@ async function saveSettings(patch) {
     if (!f.name.trim()) return toast('Enter your business name.');
     try { new Intl.NumberFormat('en', { style: 'currency', currency: f.currency }); } catch { return toast(`“${f.currency}” isn’t a currency code. Use ISO codes like MVR, USD or EUR.`); }
     for (const k of ['taxRate', 'dueDays', 'validDays']) f[k] = Math.max(0, +f[k] || 0);
-    rec = { ...db.settings, ...f, logo: vSettings.logo() };
+    for (const k of ['approverName', 'approverContact']) f[k] = f[k].trim();
+    rec = { ...db.settings, ...f, ...vSettings.images() };
   }
   if (!await persist('settings', { ...rec, id: 'main' })) return;
   db.settings = rec; dirty = false;
@@ -1290,7 +1305,7 @@ document.addEventListener('click', async e => {
   if (act === 'tpl-default') return saveSettings({ [tplType === 'quote' ? 'quoteTemplate' : 'invoiceTemplate']: v });
   if (act === 'tpl-preview') return printPaper(renderDoc(sampleDoc(tplType), v, SAMPLE_CUSTOMER), `${TEMPLATES[v]} ${docLabel(tplType)} sample`);
   if (act === 'save-settings') return saveSettings();
-  if (act === 'logo-clear') return vSettings.clearLogo();
+  if (act === 'img-clear') return vSettings.clearImage(v);
   if (act === 'backup') {
     const a = document.createElement('a');
     a.href = URL.createObjectURL(new Blob([JSON.stringify(db, null, 2)], { type: 'application/json' }));
