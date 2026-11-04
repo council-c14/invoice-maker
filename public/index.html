@@ -318,6 +318,87 @@ dialog::backdrop{background:rgba(28,28,24,.35)}
 .tpl-bold .foot{position:absolute;left:16mm;right:16mm;bottom:12mm;display:flex;justify-content:space-between;font-size:7.5pt;font-weight:700;text-transform:uppercase;letter-spacing:.1em;color:#1d1d1b}
 .tpl-bold .stamp{top:58mm}
 
+/* Template: Cards */
+.tpl-cards{background:#f3f4f6;padding:14mm 14mm 24mm;font-size:9.5pt}
+.tpl-cards .top{display:flex;justify-content:space-between;align-items:center;gap:8mm;margin-bottom:7mm}
+.tpl-cards .who{display:flex;align-items:center;gap:4mm}
+.tpl-cards .who .logo{max-height:13mm}
+.tpl-cards .bname{font-size:13pt;font-weight:700;letter-spacing:-.01em}
+.tpl-cards .chip{background:var(--a);color:#fff;border-radius:999px;padding:2mm 5mm;font-weight:700;font-size:9pt;letter-spacing:.12em;text-transform:uppercase}
+.tpl-cards .card3{display:grid;grid-template-columns:1.25fr 1fr 1fr;gap:4mm;margin-bottom:4mm}
+.tpl-cards .c{background:#fff;border-radius:3mm;padding:5mm;box-shadow:0 .3mm 1mm rgba(15,23,42,.06)}
+.tpl-cards .c.acc{background:var(--a);color:#fff}
+.tpl-cards h4{font-size:7pt;text-transform:uppercase;letter-spacing:.12em;color:#6b7280;font-weight:600;margin:0 0 2mm}
+.tpl-cards .c.acc h4{color:rgba(255,255,255,.75)}
+.tpl-cards .big{font-size:17pt;font-weight:700;font-variant-numeric:tabular-nums;letter-spacing:-.01em}
+.tpl-cards .kv{display:grid;grid-template-columns:auto 1fr;gap:1mm 4mm;font-size:9pt}
+.tpl-cards .kv span{color:#6b7280}
+.tpl-cards .kv b{text-align:right;font-weight:600}
+.tpl-cards .from{color:#6b7280;font-size:8.5pt;margin-top:2mm}
+.tpl-cards .doc-items th{font-size:7.5pt;text-transform:uppercase;letter-spacing:.08em;color:#6b7280;padding:0 2mm 2.5mm;border-bottom:1px solid #e5e7eb}
+.tpl-cards .doc-items td{padding:2.5mm 2mm;border-bottom:1px solid #f0f1f3}
+.tpl-cards .doc-items tr:last-child td{border-bottom:0}
+.tpl-cards .tot-row{background:#fff;border-radius:3mm;padding:5mm;margin-top:4mm;box-shadow:0 .3mm 1mm rgba(15,23,42,.06)}
+.tpl-cards .tot-row .sign{margin-top:0}
+.tpl-cards .tot .grand td{color:var(--a);font-weight:700;font-size:11.5pt;border-top:1px solid #e5e7eb;padding-top:2mm}
+.tpl-cards .notes{display:grid;grid-auto-flow:column;grid-auto-columns:1fr;gap:4mm;margin-top:4mm;font-size:8.5pt}
+.tpl-cards .notes > div{background:#fff;border-radius:3mm;padding:4mm 5mm;box-shadow:0 .3mm 1mm rgba(15,23,42,.06)}
+.tpl-cards .foot{position:absolute;left:14mm;right:14mm;bottom:10mm;display:flex;justify-content:space-between;color:#9ca3af;font-size:7.5pt}
+.tpl-cards .stamp{top:9mm;right:52mm;font-size:16pt}
+
+/* Template: Fresh */
+.tpl-fresh{padding:14mm 16mm 24mm;font-size:9.5pt}
+.tpl-fresh .panel{background:color-mix(in srgb,var(--a) 8%,#fff);border-radius:5mm;padding:9mm 9mm 8mm;display:grid;grid-template-columns:1fr auto;gap:6mm 10mm;align-items:end}
+.tpl-fresh .panel .logo{max-height:12mm;margin-bottom:3mm}
+.tpl-fresh .bname{font-weight:700;font-size:11pt}
+.tpl-fresh .from{color:#5b6472;font-size:8.5pt;margin-top:1mm}
+.tpl-fresh h1{font-size:28pt;font-weight:600;letter-spacing:-.03em;margin:0 0 1mm;color:#111827;line-height:1}
+.tpl-fresh .no{color:var(--a);font-weight:600}
+.tpl-fresh .amt{text-align:right}
+.tpl-fresh .amt span{display:block;font-size:8pt;color:#5b6472}
+.tpl-fresh .amt b{font-size:22pt;font-weight:700;letter-spacing:-.02em;color:var(--a);font-variant-numeric:tabular-nums}
+.tpl-fresh .info{display:grid;grid-template-columns:1.4fr 1fr 1fr 1fr;gap:6mm;margin:8mm 2mm 8mm}
+.tpl-fresh h4{display:table;font-size:7pt;font-weight:600;text-transform:uppercase;letter-spacing:.1em;color:var(--a);background:color-mix(in srgb,var(--a) 10%,#fff);border-radius:999px;padding:.8mm 2.5mm;margin:0 0 2mm}
+.tpl-fresh .doc-items th{background:#f3f4f6;color:#4b5563;font-size:7.5pt;text-transform:uppercase;letter-spacing:.06em;padding:2.5mm 3mm}
+.tpl-fresh .doc-items th:first-child{border-radius:2mm 0 0 2mm}
+.tpl-fresh .doc-items th:last-child{border-radius:0 2mm 2mm 0}
+.tpl-fresh .doc-items td{padding:3mm;border-bottom:1px dashed #e5e7eb}
+.tpl-fresh .tot{margin-top:4mm}
+.tpl-fresh .tot td{padding:3px 3mm}
+.tpl-fresh .tot .grand td{background:var(--a);color:#fff;font-weight:700;font-size:11pt;padding:2.5mm 4mm}
+.tpl-fresh .tot .grand td:first-child{border-radius:999px 0 0 999px}
+.tpl-fresh .tot .grand td:last-child{border-radius:0 999px 999px 0}
+.tpl-fresh .notes{display:grid;grid-auto-flow:column;grid-auto-columns:1fr;gap:8mm;margin-top:10mm;font-size:8.5pt;color:#374151}
+.tpl-fresh .foot{position:absolute;left:16mm;right:16mm;bottom:10mm;display:flex;justify-content:space-between;color:#9ca3af;font-size:7.5pt;border-top:1px solid #f0f1f3;padding-top:3mm}
+.tpl-fresh .stamp{top:54mm}
+
+/* Template: Edge */
+.tpl-edge{padding:16mm 16mm 24mm 24mm;font-size:9.5pt}
+.tpl-edge::before{content:"";position:absolute;left:0;top:0;bottom:0;width:7mm;background:var(--a)}
+.tpl-edge .hd{display:flex;justify-content:space-between;align-items:flex-start;gap:10mm}
+.tpl-edge .kind{font-size:8pt;font-weight:700;text-transform:uppercase;letter-spacing:.24em;color:var(--a)}
+.tpl-edge .num{font-size:30pt;font-weight:200;letter-spacing:-.02em;line-height:1.05;margin-top:1mm}
+.tpl-edge .who{text-align:right}
+.tpl-edge .who .logo{margin-left:auto;margin-bottom:2mm}
+.tpl-edge .bname{font-weight:700;font-size:11pt}
+.tpl-edge .from{color:#6b7280;font-size:8.5pt;margin-top:1mm}
+.tpl-edge .strip{display:flex;gap:8mm;margin:7mm 0 8mm;padding:3mm 0;border-top:1px solid #e5e7eb;border-bottom:1px solid #e5e7eb;font-size:9pt}
+.tpl-edge .strip span{color:#6b7280;margin-right:2mm}
+.tpl-edge .parties{display:grid;grid-template-columns:1fr auto;gap:10mm;margin-bottom:8mm}
+.tpl-edge h4{font-size:7pt;font-weight:700;text-transform:uppercase;letter-spacing:.16em;color:#9ca3af;margin:0 0 2mm}
+.tpl-edge .due{text-align:right}
+.tpl-edge .due b{display:block;font-size:22pt;font-weight:300;letter-spacing:-.02em;color:var(--a);font-variant-numeric:tabular-nums}
+.tpl-edge .doc-items th{font-size:7pt;text-transform:uppercase;letter-spacing:.14em;color:#9ca3af;padding:0 2mm 2.5mm;border-bottom:2px solid #111827}
+.tpl-edge .doc-items td{padding:3mm 2mm;border-bottom:1px solid #eef0f2}
+.tpl-edge .doc-items tbody{counter-reset:line}
+.tpl-edge .doc-items td:first-child{font-size:0;text-align:center}
+.tpl-edge .doc-items td:first-child::before{counter-increment:line;content:counter(line);display:inline-grid;place-items:center;width:5mm;height:5mm;border-radius:50%;background:var(--a);color:#fff;font-size:7pt;font-weight:700}
+.tpl-edge .tot{margin-top:4mm}
+.tpl-edge .tot .grand td{font-weight:700;font-size:12pt;color:var(--a);border-top:2px solid #111827;padding-top:2mm}
+.tpl-edge .notes{display:grid;grid-auto-flow:column;grid-auto-columns:1fr;gap:8mm;margin-top:10mm;font-size:8.5pt;color:#374151}
+.tpl-edge .foot{position:absolute;left:24mm;right:16mm;bottom:10mm;display:flex;justify-content:space-between;color:#9ca3af;font-size:7.5pt;letter-spacing:.06em}
+.tpl-edge .stamp{top:70mm}
+
 /* Report paper */
 .tpl-report{padding:16mm 16mm 22mm}
 .tpl-report .hd{display:flex;justify-content:space-between;gap:10mm;border-bottom:2px solid #1d1d1b;padding-bottom:5mm;margin-bottom:6mm}
@@ -417,7 +498,7 @@ const DEFAULTS = {
   logo: '', approverName: '', approverContact: '', approverSign: '', notes: 'Thank you for your business.', terms: '', bank: '',
 };
 const S = () => ({ ...DEFAULTS, ...db.settings });
-const TEMPLATES = { classic: 'Classic', modern: 'Modern', minimal: 'Minimal', letter: 'Letterhead', side: 'Sidebar', bold: 'Bold' };
+const TEMPLATES = { classic: 'Classic', modern: 'Modern', minimal: 'Minimal', letter: 'Letterhead', side: 'Sidebar', bold: 'Bold', cards: 'Cards', fresh: 'Fresh', edge: 'Edge' };
 const TEMPLATE_NOTES = {
   classic: 'Serif letterhead with ruled tables. Suits professional services and formal tenders.',
   modern: 'Colour band in your brand accent with a clear amount-due strip.',
@@ -425,6 +506,9 @@ const TEMPLATE_NOTES = {
   letter: 'Centred letterhead with double rules, like headed paper. Suits councils and offices.',
   side: 'Accent-coloured side column holding your details, the customer and the amount due.',
   bold: 'Black header block with a large title. Strong and easy to read at a glance.',
+  cards: 'App-style layout: white rounded cards on a soft grey page, amount due on an accent card.',
+  fresh: 'Tinted header panel, pill labels and a rounded accent total. Light and contemporary.',
+  edge: 'Accent stripe down the left edge, a large light number and numbered line items.',
 };
 const METHODS = ['Bank transfer', 'Cash', 'Card', 'Cheque', 'Other'];
 const cust = id => db.customers.find(c => c.id === id) || { name: 'Unknown customer' };
@@ -628,6 +712,40 @@ function renderDoc(d, tpl = d.template, c = cust(d.customerId)) {
     </div>
     <div class="body">${body}</div>${stamp(d)}
     <div class="foot"><span>${esc(s.name)}</span><span>${esc(d.number)}</span></div>
+  </div>`;
+
+  const party = `<h4>${q ? 'Prepared for' : 'Billed to'}</h4>${billTo(c)}`;
+
+  if (tpl === 'cards') return `<div class="paper tpl-cards" style="${style}">
+    <div class="top"><div class="who">${logoImg(s)}<div><div class="bname">${esc(s.name)}</div></div></div><div class="chip">${title}</div></div>
+    <div class="card3">
+      <div class="c">${party}</div>
+      <div class="c"><h4>Details</h4><div class="kv"><span>Number</span><b>${esc(d.number)}</b><span>Issued</span><b>${fmtDate(d.date)}</b><span>${dueLabel}</span><b>${fmtDate(d.due)}</b>${d.ref ? `<span>Reference</span><b>${esc(d.ref)}</b>` : ''}</div></div>
+      <div class="c acc"><h4>${amountLabel}</h4><div class="big">${money(amount)}</div></div>
+    </div>
+    <div class="c">${itemsTable(d)}</div>${totalsWithSign(d)}${notesBlock(d)}${stamp(d)}
+    <div class="foot"><span>${[s.name, s.phone, s.email].filter(Boolean).map(esc).join('  ·  ')}</span><span>${esc(d.number)}</span></div>
+  </div>`;
+
+  if (tpl === 'fresh') return `<div class="paper tpl-fresh" style="${style}">
+    <div class="panel"><div>${logoImg(s)}<h1>${title}</h1><div class="no">${esc(d.number)}</div></div><div class="amt"><span>${amountLabel}</span><b>${money(amount)}</b></div></div>
+    <div class="info">
+      <div>${party}</div>
+      <div><h4>From</h4><div class="bname">${esc(s.name)}</div><div class="from">${fromLines}</div></div>
+      <div><h4>Issued</h4>${fmtDate(d.date)}${d.ref ? `<div style="margin-top:3mm"><h4>Reference</h4>${esc(d.ref)}</div>` : ''}</div>
+      <div><h4>${dueLabel}</h4>${fmtDate(d.due)}</div>
+    </div>
+    ${body}${stamp(d)}
+    <div class="foot"><span>${esc(s.name)}${s.website ? ' · ' + esc(s.website) : ''}</span><span>${esc(d.number)}</span></div>
+  </div>`;
+
+  if (tpl === 'edge') return `<div class="paper tpl-edge" style="${style}">
+    <div class="hd"><div><div class="kind">${title}</div><div class="num">${esc(d.number)}</div></div>
+      <div class="who">${logoImg(s)}<div class="bname">${esc(s.name)}</div><div class="from">${fromLines}</div></div></div>
+    <div class="strip"><div><span>Issued</span>${fmtDate(d.date)}</div><div><span>${dueLabel}</span>${fmtDate(d.due)}</div>${d.ref ? `<div><span>Reference</span>${esc(d.ref)}</div>` : ''}</div>
+    <div class="parties"><div>${party}</div><div class="due"><h4>${amountLabel}</h4><b>${money(amount)}</b></div></div>
+    ${body}${stamp(d)}
+    <div class="foot"><span>${esc(s.name)}</span><span>${esc(s.website || d.number)}</span></div>
   </div>`;
 
   if (tpl === 'minimal') return `<div class="paper tpl-minimal">
@@ -1000,7 +1118,7 @@ function vDoc(id) {
     : q && st === 'accepted' ? `<button class="btn primary" data-act="convert">Convert to invoice</button>` : '';
 
   main().innerHTML = head(`${esc(d.number)} ${pill(d)}`, `${docLabel(d.type)} for <a href="#/customer/${d.customerId}">${esc(c.name)}</a>`,
-    `<div class="seg" title="Template">${Object.entries(TEMPLATES).map(([k, v]) => `<button data-act="tpl" data-v="${k}" class="${(d.template || 'classic') === k ? 'on' : ''}">${v}</button>`).join('')}</div>
+    `<select class="inp" id="tpl-pick" style="width:auto;height:32px" aria-label="Template">${Object.entries(TEMPLATES).map(([k, v]) => `<option value="${k}" ${(d.template || 'classic') === k ? 'selected' : ''}>${v} template</option>`).join('')}</select>
      <button class="btn" data-act="print">${ICON.print}Print / PDF</button>${primary}
      <details class="menu"><summary class="btn" aria-label="More actions">${ICON.more}</summary><div class="menu-list">${menu}</div></details>`,
     `<a href="${listHref}">${q ? 'Quotations' : 'Invoices'}</a> / ${esc(d.number)}`) + `
@@ -1019,6 +1137,7 @@ function vDoc(id) {
         <div class="card"><div class="card-head"><h2>Customer</h2><a class="small" href="#/report/${d.customerId}">Report</a></div><div class="card-body small" style="line-height:1.6">${billTo(c)}</div></div>
       </div>
     </div>`;
+  $('#tpl-pick').onchange = e => docAction('tpl', e.target.value);
   vDoc.current = d;
 }
 async function docAction(act, v) {
