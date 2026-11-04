@@ -3,7 +3,10 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>Billing</title>
+<title>Invoice Maker</title>
+<link rel="icon" href="icon-192.png">
+<link rel="apple-touch-icon" href="icon-192.png">
+<meta name="theme-color" content="#f5f5f2">
 <style>
 :root{
   --bg:#f5f5f2;--panel:#fff;--side:#eeeeea;
@@ -451,7 +454,7 @@ dialog::backdrop{background:rgba(28,28,24,.35)}
 <body>
 <div id="app">
   <aside class="side">
-    <div class="biz"><div class="biz-mark" id="biz-mark"></div><div style="min-width:0"><div class="biz-name" id="biz-name"></div><div class="biz-sub">Billing</div></div></div>
+    <div class="biz"><div class="biz-mark" id="biz-mark"></div><div style="min-width:0"><div class="biz-name" id="biz-name"></div><div class="biz-sub">Invoice Maker</div></div></div>
     <nav class="nav" id="nav">
       <a href="#/" data-nav=""><svg viewBox="0 0 24 24"><path d="M3 12l9-8 9 8M5 10v10h14V10"/></svg>Overview</a>
       <a href="#/invoices" data-nav="invoices doc-invoice"><svg viewBox="0 0 24 24"><path d="M6 2h9l5 5v15H6z"/><path d="M14 2v6h6M9 13h7M9 17h7"/></svg>Invoices</a>
@@ -786,7 +789,8 @@ function printPaper(html, title) {
   $('#print').innerHTML = html;
   const old = document.title;
   document.title = title; // becomes the PDF file name in most browsers
-  window.print();
+  // The Android app has no window.print(); its bridge opens the system print dialog (Save as PDF).
+  if (window.AndroidBridge) AndroidBridge.print(title); else window.print();
   document.title = old;
 }
 
@@ -895,8 +899,13 @@ function downloadCSV(name, rows) {
     v = String(v ?? '');
     return /[",\n\r]/.test(v) ? `"${v.replace(/"/g, '""')}"` : v;
   };
+  saveText(name, 'text/csv', '﻿' + rows.map(r => r.map(cell).join(',')).join('\r\n'));
+}
+// Browsers download a blob; the Android app asks where to save through its bridge.
+function saveText(name, mime, text) {
+  if (window.AndroidBridge) return AndroidBridge.saveFile(name, mime, text);
   const a = document.createElement('a');
-  a.href = URL.createObjectURL(new Blob(['﻿' + rows.map(r => r.map(cell).join(',')).join('\r\n')], { type: 'text/csv' }));
+  a.href = URL.createObjectURL(new Blob([text], { type: mime }));
   a.download = name; a.click();
   setTimeout(() => URL.revokeObjectURL(a.href), 1000);
 }
@@ -1482,7 +1491,7 @@ function paintBrand() {
   const s = S();
   $('#biz-name').textContent = s.name;
   $('#biz-mark').innerHTML = s.logo ? `<img src="${esc(s.logo)}" alt="">` : esc((s.name.match(/\b\w/g) || ['B']).slice(0, 2).join('').toUpperCase());
-  document.title = `${s.name} · Billing`;
+  document.title = `${s.name} · Invoice Maker`;
 }
 function route() {
   const [view = '', a = '', b = ''] = location.hash.replace(/^#\/?/, '').split('/');
@@ -1536,9 +1545,7 @@ document.addEventListener('click', async e => {
   if (act === 'save-settings') return saveSettings();
   if (act === 'img-clear') return vSettings.clearImage(v);
   if (act === 'backup') {
-    const a = document.createElement('a');
-    a.href = URL.createObjectURL(new Blob([JSON.stringify(db, null, 2)], { type: 'application/json' }));
-    a.download = `billing-backup-${today()}.json`; a.click(); return;
+    return saveText(`invoice-maker-backup-${today()}.json`, 'application/json', JSON.stringify(db, null, 2));
   }
   return docAction(act, v);
 });

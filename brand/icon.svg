@@ -1,0 +1,35 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512">
+  <defs>
+    <linearGradient id="bg" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0" stop-color="#2b7a62"/>
+      <stop offset="1" stop-color="#123d31"/>
+    </linearGradient>
+    <linearGradient id="paper" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0" stop-color="#ffffff"/>
+      <stop offset="1" stop-color="#eef3f0"/>
+    </linearGradient>
+    <filter id="shadow" x="-30%" y="-30%" width="160%" height="160%">
+      <feDropShadow dx="0" dy="10" stdDeviation="14" flood-color="#061a14" flood-opacity=".35"/>
+    </filter>
+  </defs>
+  <g id="background"><rect width="512" height="512" rx="112" fill="url(#bg)"/>
+    <circle cx="430" cy="70" r="190" fill="#ffffff" opacity=".05"/></g>
+  <g id="foreground">
+    <g filter="url(#shadow)">
+      <!-- sheet with folded corner -->
+      <path d="M156 112h146l66 66v210a24 24 0 0 1-24 24H156a24 24 0 0 1-24-24V136a24 24 0 0 1 24-24z" fill="url(#paper)"/>
+      <path d="M302 112v42a24 24 0 0 0 24 24h42z" fill="#c9ddd4"/>
+    </g>
+    <!-- header and lines -->
+    <rect x="166" y="150" width="92" height="16" rx="8" fill="#1f5c4a"/>
+    <rect x="166" y="204" width="168" height="10" rx="5" fill="#c4d3cc"/>
+    <rect x="166" y="232" width="132" height="10" rx="5" fill="#c4d3cc"/>
+    <rect x="166" y="260" width="150" height="10" rx="5" fill="#c4d3cc"/>
+    <!-- total row -->
+    <rect x="166" y="306" width="168" height="2" fill="#dbe5e0"/>
+    <rect x="252" y="326" width="82" height="16" rx="8" fill="#1f5c4a"/>
+    <!-- paid badge -->
+    <circle cx="352" cy="384" r="58" fill="#7fdcb5" stroke="#123d31" stroke-width="10"/>
+    <path d="M326 385l18 18 36-38" fill="none" stroke="#123d31" stroke-width="14" stroke-linecap="round" stroke-linejoin="round"/>
+  </g>
+</svg>
