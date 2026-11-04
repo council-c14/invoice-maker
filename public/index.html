@@ -183,7 +183,9 @@ dialog::backdrop{background:rgba(28,28,24,.35)}
 .paper .tot td{padding:4px 0}
 .paper .pre{white-space:pre-line}
 .paper .stamp{position:absolute;top:62mm;right:20mm;transform:rotate(-12deg);border:2.5px solid #2f7a55;color:#2f7a55;padding:4px 14px;font-weight:800;letter-spacing:.18em;font-size:20pt;border-radius:4px;opacity:.8}
-.paper .sign{width:80mm;margin-top:14mm;break-inside:avoid}
+.paper .sign{width:72mm;margin-top:10mm;break-inside:avoid}
+.paper .tot-row{display:flex;justify-content:space-between;align-items:flex-end;gap:8mm;break-inside:avoid}
+.paper .tot-row .sign{margin-top:4mm}
 .paper .sign-label{font-weight:600;font-size:9pt}
 .paper .sign-line{border-top:1px solid #9a9a94;padding-top:1.5mm;font-size:8pt;color:#6b6b66}
 .paper .sign-space{height:18mm;display:flex;align-items:flex-end;padding-bottom:1mm}
@@ -210,7 +212,7 @@ dialog::backdrop{background:rgba(28,28,24,.35)}
 .tpl-classic .doc-items td{padding:2.5mm 2mm;border-bottom:1px solid #dcdcd6}
 .tpl-classic .tot{margin-top:5mm}
 .tpl-classic .tot .grand td{border-top:2px solid #1d1d1b;padding-top:2mm;font-weight:700;font-size:11pt}
-.tpl-classic .notes{display:grid;grid-template-columns:1fr 1fr;gap:10mm;margin-top:10mm;font-size:9pt}
+.tpl-classic .notes{display:grid;grid-auto-flow:column;grid-auto-columns:1fr;gap:8mm;margin-top:10mm;font-size:9pt}
 .tpl-classic .foot{position:absolute;left:18mm;right:18mm;bottom:12mm;text-align:center;color:#8a8a84;font-size:8pt;border-top:1px solid #dcdcd6;padding-top:3mm}
 
 /* Template: Modern */
@@ -231,7 +233,7 @@ dialog::backdrop{background:rgba(28,28,24,.35)}
 .tpl-modern .tot{margin-top:4mm}
 .tpl-modern .tot td{padding:3px 3mm}
 .tpl-modern .tot .grand td{background:var(--a);color:#fff;font-weight:700;font-size:11pt;padding:2.5mm 3mm}
-.tpl-modern .notes{display:grid;grid-template-columns:1fr 1fr;gap:10mm;margin-top:10mm;font-size:9pt}
+.tpl-modern .notes{display:grid;grid-auto-flow:column;grid-auto-columns:1fr;gap:8mm;margin-top:10mm;font-size:9pt}
 .tpl-modern .foot{position:absolute;left:16mm;right:16mm;bottom:12mm;display:flex;justify-content:space-between;color:#8a8a84;font-size:8pt}
 .tpl-modern .stamp{top:50mm}
 
@@ -251,6 +253,70 @@ dialog::backdrop{background:rgba(28,28,24,.35)}
 .tpl-minimal .notes{display:grid;grid-template-columns:repeat(3,1fr);gap:6mm;margin-top:14mm;font-size:8.5pt;color:#44443f}
 .tpl-minimal .foot{position:absolute;left:20mm;right:20mm;bottom:12mm;color:#a3a39b;font-size:7.5pt;display:flex;justify-content:space-between}
 .tpl-minimal .paid-note{color:#2f7a55;font-weight:700;text-align:right;letter-spacing:.1em;font-size:8pt;text-transform:uppercase}
+
+/* Template: Letterhead */
+.tpl-letter{padding:16mm 20mm 26mm;font-size:9.5pt}
+.tpl-letter .lh{text-align:center;padding-bottom:4mm;border-bottom:3px double #1d1d1b}
+.tpl-letter .lh .logo{margin:0 auto 3mm}
+.tpl-letter .bname{font-family:Georgia,"Times New Roman",serif;font-size:18pt;letter-spacing:.08em;text-transform:uppercase}
+.tpl-letter .from{color:#55554f;font-size:8.5pt;margin-top:1.5mm}
+.tpl-letter .title{text-align:center;margin:8mm 0 7mm}
+.tpl-letter .title h1{font-family:Georgia,serif;font-weight:400;font-size:15pt;letter-spacing:.3em;text-transform:uppercase;margin:0}
+.tpl-letter .title div{color:#6b6b66;font-size:9pt;margin-top:1mm}
+.tpl-letter .parties{display:grid;grid-template-columns:1fr auto;gap:12mm;margin-bottom:8mm}
+.tpl-letter h4{font-family:Georgia,serif;font-style:italic;font-weight:400;font-size:9pt;color:#6b6b66;margin:0 0 1.5mm}
+.tpl-letter .meta{border-collapse:collapse;font-size:9pt}
+.tpl-letter .meta th{text-align:left;font-weight:400;color:#6b6b66;padding:1px 8mm 1px 0}
+.tpl-letter .meta td{text-align:right;padding:1px 0}
+.tpl-letter .doc-items th{font-family:Georgia,serif;font-weight:400;font-style:italic;color:#55554f;padding:2mm;border-top:1px solid #1d1d1b;border-bottom:1px solid #1d1d1b}
+.tpl-letter .doc-items td{padding:2.5mm 2mm;border-bottom:1px solid #e3e3de}
+.tpl-letter .tot{margin-top:4mm}
+.tpl-letter .tot .grand td{border-top:3px double #1d1d1b;padding-top:2mm;font-weight:700}
+.tpl-letter .notes{display:grid;grid-auto-flow:column;grid-auto-columns:1fr;gap:8mm;margin-top:10mm;font-size:9pt}
+.tpl-letter .foot{position:absolute;left:20mm;right:20mm;bottom:12mm;text-align:center;font-family:Georgia,serif;font-style:italic;color:#8a8a84;font-size:8.5pt}
+
+/* Template: Sidebar */
+.tpl-side{display:grid;grid-template-columns:64mm 1fr;font-size:9.5pt}
+.tpl-side .bar{background:var(--a);color:#fff;padding:16mm 8mm 20mm 10mm;display:flex;flex-direction:column;gap:7mm}
+.tpl-side .bar .logo{background:#fff;padding:2mm;border-radius:2px}
+.tpl-side .bname{font-size:13pt;font-weight:700;line-height:1.25}
+.tpl-side .bar .from{font-size:8.5pt;opacity:.85;margin-top:1.5mm}
+.tpl-side .bar h4{font-size:7pt;text-transform:uppercase;letter-spacing:.12em;opacity:.7;font-weight:600;margin:0 0 1.5mm}
+.tpl-side .bar .big{font-size:16pt;font-weight:700;font-variant-numeric:tabular-nums}
+.tpl-side .bar .sep{border-top:1px solid rgba(255,255,255,.3)}
+.tpl-side .content{padding:16mm 14mm 26mm 12mm;position:relative}
+.tpl-side .content h1{font-size:22pt;font-weight:700;letter-spacing:-.01em;margin:0;color:var(--a)}
+.tpl-side .content .no{color:#6b6b66;margin:1mm 0 10mm}
+.tpl-side .doc-items th{font-size:7.5pt;text-transform:uppercase;letter-spacing:.08em;color:#6b6b66;padding:0 2mm 2mm;border-bottom:2px solid var(--a)}
+.tpl-side .doc-items td{padding:2.5mm 2mm;border-bottom:1px solid #ececE7}
+.tpl-side .tot{margin-top:4mm;width:70mm}
+.tpl-side .tot .grand td{color:var(--a);font-weight:700;font-size:11pt;border-top:2px solid var(--a);padding-top:2mm}
+.tpl-side .notes{display:grid;gap:5mm;margin-top:10mm;font-size:9pt}
+.tpl-side .notes h4{font-size:7.5pt;text-transform:uppercase;letter-spacing:.1em;color:#8a8a84;margin:0 0 1mm}
+.tpl-side .foot{position:absolute;left:12mm;right:14mm;bottom:12mm;color:#a3a39b;font-size:7.5pt;text-align:right}
+.tpl-side .stamp{right:16mm;top:24mm}
+
+/* Template: Bold */
+.tpl-bold{font-size:9.5pt;padding-bottom:26mm}
+.tpl-bold .blk{background:#1d1d1b;color:#fff;padding:14mm 16mm 12mm;display:flex;justify-content:space-between;align-items:flex-end;gap:10mm}
+.tpl-bold .blk h1{font-size:34pt;font-weight:800;letter-spacing:-.02em;text-transform:uppercase;margin:0;line-height:1}
+.tpl-bold .blk .no{opacity:.7;margin-top:2mm}
+.tpl-bold .blk .amt{text-align:right}
+.tpl-bold .blk .amt span{display:block;font-size:7.5pt;text-transform:uppercase;letter-spacing:.12em;opacity:.7}
+.tpl-bold .blk .amt b{font-size:20pt;font-variant-numeric:tabular-nums;border-bottom:3px solid var(--a);padding-bottom:1mm}
+.tpl-bold .cols{display:grid;grid-template-columns:1.2fr 1.2fr 1fr;gap:8mm;padding:9mm 16mm 8mm}
+.tpl-bold .cols .logo{margin-bottom:2mm}
+.tpl-bold h4{font-size:7.5pt;font-weight:800;text-transform:uppercase;letter-spacing:.1em;margin:0 0 1.5mm}
+.tpl-bold .body{padding:0 16mm}
+.tpl-bold .doc-items th{background:#1d1d1b;color:#fff;font-size:7.5pt;text-transform:uppercase;letter-spacing:.08em;padding:2.5mm 3mm}
+.tpl-bold .doc-items td{padding:3mm;border-bottom:1px solid #e3e3de}
+.tpl-bold .tot{margin-top:4mm}
+.tpl-bold .tot td{padding:3px 3mm}
+.tpl-bold .tot .grand td{font-weight:800;font-size:12pt;border-top:3px solid #1d1d1b;padding-top:2.5mm}
+.tpl-bold .notes{display:grid;grid-auto-flow:column;grid-auto-columns:1fr;gap:8mm;margin-top:10mm;font-size:9pt}
+.tpl-bold .notes h4{font-size:7.5pt}
+.tpl-bold .foot{position:absolute;left:16mm;right:16mm;bottom:12mm;display:flex;justify-content:space-between;font-size:7.5pt;font-weight:700;text-transform:uppercase;letter-spacing:.1em;color:#1d1d1b}
+.tpl-bold .stamp{top:58mm}
 
 /* Report paper */
 .tpl-report{padding:16mm 16mm 22mm}
@@ -351,11 +417,14 @@ const DEFAULTS = {
   logo: '', approverName: '', approverContact: '', approverSign: '', notes: 'Thank you for your business.', terms: '', bank: '',
 };
 const S = () => ({ ...DEFAULTS, ...db.settings });
-const TEMPLATES = { classic: 'Classic', modern: 'Modern', minimal: 'Minimal' };
+const TEMPLATES = { classic: 'Classic', modern: 'Modern', minimal: 'Minimal', letter: 'Letterhead', side: 'Sidebar', bold: 'Bold' };
 const TEMPLATE_NOTES = {
   classic: 'Serif letterhead with ruled tables. Suits professional services and formal tenders.',
   modern: 'Colour band in your brand accent with a clear amount-due strip.',
   minimal: 'Swiss-style grid, monochrome, the amount set large at the top.',
+  letter: 'Centred letterhead with double rules, like headed paper. Suits councils and offices.',
+  side: 'Accent-coloured side column holding your details, the customer and the amount due.',
+  bold: 'Black header block with a large title. Strong and easy to read at a glance.',
 };
 const METHODS = ['Bank transfer', 'Cash', 'Card', 'Cheque', 'Other'];
 const cust = id => db.customers.find(c => c.id === id) || { name: 'Unknown customer' };
@@ -491,6 +560,8 @@ function billTo(c) {
     ${contactLine(c) ? `<br>${contactLine(c)}` : ''}${c.taxId ? `<br>TIN ${esc(c.taxId)}` : ''}`;
 }
 const logoImg = s => s.logo ? `<img class="logo" src="${esc(s.logo)}" alt="">` : '';
+// Approved by sits in the empty space left of the totals, so a full invoice still fits one A4 page.
+const totalsWithSign = d => `<div class="tot-row">${signBlock()}${totalsTable(d)}</div>`;
 function signBlock() {
   const s = S(), who = [s.approverName, s.approverContact].filter(Boolean).map(esc).join(' · ');
   return `<div class="sign"><div class="sign-label">Approved by</div>
@@ -515,9 +586,48 @@ function renderDoc(d, tpl = d.template, c = cust(d.customerId)) {
       <div><h4>Issue date</h4>${fmtDate(d.date)}<h4 style="margin-top:3mm">${dueLabel}</h4>${fmtDate(d.due)}${d.ref ? `<h4 style="margin-top:3mm">Reference</h4>${esc(d.ref)}` : ''}</div>
       <div><h4>${amountLabel}</h4><div class="big">${money(amount)}</div></div>
     </div>
-    <div class="body">${itemsTable(d)}${totalsTable(d)}${notesBlock(d)}${signBlock(d)}</div>
+    <div class="body">${itemsTable(d)}${totalsWithSign(d)}${notesBlock(d)}</div>
     ${stamp(d)}
     <div class="foot"><span>${esc(s.name)}</span><span>${esc(s.website)}</span><span>${esc(d.number)}</span></div>
+  </div>`;
+
+  const meta = `<tr><th>${title} no.</th><td>${esc(d.number)}</td></tr><tr><th>Date</th><td>${fmtDate(d.date)}</td></tr>
+    <tr><th>${dueLabel}</th><td>${fmtDate(d.due)}</td></tr>${d.ref ? `<tr><th>Reference</th><td>${esc(d.ref)}</td></tr>` : ''}`;
+  const body = `${itemsTable(d)}${totalsWithSign(d)}${notesBlock(d)}`;
+
+  if (tpl === 'letter') return `<div class="paper tpl-letter">
+    <div class="lh">${logoImg(s)}<div class="bname">${esc(s.name)}</div><div class="from">${[s.address.replace(/\n+/g, ', '), s.phone, s.email, s.taxId && 'TIN ' + s.taxId].filter(Boolean).map(esc).join('  ·  ')}</div></div>
+    <div class="title"><h1>${title}</h1><div>${esc(d.number)}</div></div>
+    <div class="parties"><div><h4>${q ? 'Prepared for' : 'Billed to'}</h4>${billTo(c)}</div><table class="meta">${meta}<tr><th>${amountLabel}</th><td><strong>${money(amount)}</strong></td></tr></table></div>
+    ${body}${stamp(d)}
+    <div class="foot">${[s.name, s.website].filter(Boolean).map(esc).join(' — ')}</div>
+  </div>`;
+
+  if (tpl === 'side') return `<div class="paper tpl-side" style="${style}">
+    <div class="bar">
+      <div>${logoImg(s)}<div class="bname" style="margin-top:${s.logo ? '3mm' : 0}">${esc(s.name)}</div><div class="from">${fromLines}</div></div>
+      <div class="sep"></div>
+      <div><h4>${q ? 'Prepared for' : 'Billed to'}</h4>${billTo(c)}</div>
+      <div><h4>Issue date</h4>${fmtDate(d.date)}</div>
+      <div><h4>${dueLabel}</h4>${fmtDate(d.due)}</div>
+      ${d.ref ? `<div><h4>Reference</h4>${esc(d.ref)}</div>` : ''}
+      <div class="sep"></div>
+      <div><h4>${amountLabel}</h4><div class="big">${money(amount)}</div></div>
+    </div>
+    <div class="content"><h1>${title}</h1><div class="no">No. ${esc(d.number)}</div>${itemsTable(d)}${totalsTable(d)}${notesBlock(d)}${signBlock()}
+      <div class="foot">${esc(s.website || s.name)}</div></div>
+    ${stamp(d)}
+  </div>`;
+
+  if (tpl === 'bold') return `<div class="paper tpl-bold" style="${style}">
+    <div class="blk"><div><h1>${title}</h1><div class="no">No. ${esc(d.number)}</div></div><div class="amt"><span>${amountLabel}</span><b>${money(amount)}</b></div></div>
+    <div class="cols">
+      <div>${logoImg(s)}<h4>From</h4><strong>${esc(s.name)}</strong><br>${fromLines}</div>
+      <div><h4>${q ? 'Prepared for' : 'Billed to'}</h4>${billTo(c)}</div>
+      <div><h4>Issue date</h4>${fmtDate(d.date)}<h4 style="margin-top:3mm">${dueLabel}</h4>${fmtDate(d.due)}${d.ref ? `<h4 style="margin-top:3mm">Reference</h4>${esc(d.ref)}` : ''}</div>
+    </div>
+    <div class="body">${body}</div>${stamp(d)}
+    <div class="foot"><span>${esc(s.name)}</span><span>${esc(d.number)}</span></div>
   </div>`;
 
   if (tpl === 'minimal') return `<div class="paper tpl-minimal">
@@ -532,7 +642,7 @@ function renderDoc(d, tpl = d.template, c = cust(d.customerId)) {
       <div><h4>Issued</h4>${fmtDate(d.date)}</div>
       <div><h4>${dueLabel}</h4>${fmtDate(d.due)}</div>
     </div>
-    ${itemsTable(d, ['', 'Description', 'Qty', 'Unit price', 'Amount'])}${totalsTable(d)}${notesBlock(d)}${signBlock(d)}
+    ${itemsTable(d, ['', 'Description', 'Qty', 'Unit price', 'Amount'])}${totalsWithSign(d)}${notesBlock(d)}
     <div class="foot"><span>${esc(s.name)}${s.website ? ' — ' + esc(s.website) : ''}</span><span>${esc(d.number)}</span></div>
   </div>`;
 
@@ -548,7 +658,7 @@ function renderDoc(d, tpl = d.template, c = cust(d.customerId)) {
     </div>
     <div class="parties"><div><h4>${q ? 'Quotation for' : 'Bill to'}</h4>${billTo(c)}</div>
       <div class="due"><h4>${amountLabel}</h4><b>${money(amount)}</b>${q ? '' : `<span style="color:#6b6b66;font-size:9pt">by ${fmtDate(d.due)}</span>`}</div></div>
-    ${itemsTable(d)}${totalsTable(d)}${notesBlock(d)}${signBlock(d)}
+    ${itemsTable(d)}${totalsWithSign(d)}${notesBlock(d)}
     ${stamp(d)}
     <div class="foot">${[s.name, s.phone, s.email, s.website].filter(Boolean).map(esc).join('  ·  ')}</div>
   </div>`;
