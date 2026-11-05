@@ -59,7 +59,7 @@ h1,h2,h3{margin:0;font-weight:600;letter-spacing:-.01em}
 .small{font-size:12px}
 
 /* Layout */
-#app{display:grid;grid-template-columns:224px 1fr;min-height:100vh}
+#app{display:grid;grid-template-columns:224px 1fr;min-height:100vh;overflow-x:clip} /* swipes slide pages sideways; never widen the page */
 .side{background:var(--side);border-right:1px solid var(--line);padding:18px 12px;position:sticky;top:0;height:100vh;display:flex;flex-direction:column;gap:2px}
 .side-top{display:flex;align-items:flex-start;gap:4px}
 .biz{display:flex;align-items:center;gap:10px;padding:2px 8px 18px;flex:1;min-width:0}
@@ -464,6 +464,8 @@ main.enter > :nth-child(2){animation-delay:.04s}
 main.enter > :nth-child(3){animation-delay:.08s}
 main.enter > :nth-child(4){animation-delay:.12s}
 main.enter > :nth-child(n+5){animation-delay:.16s}
+main.enter.swipe > *{animation-name:slide-in;animation-duration:.32s}
+@keyframes slide-in{from{opacity:0;transform:translateX(var(--from,24px))}to{opacity:1;transform:none}}
 @keyframes rise{from{opacity:0;transform:translateY(8px)}to{opacity:1;transform:none}}
 @keyframes fade{from{opacity:0}to{opacity:1}}
 @keyframes pop{from{opacity:0;transform:translateY(-4px) scale(.98)}to{opacity:1;transform:none}}
@@ -1655,7 +1657,9 @@ function route() {
 function enterAnimation() {
   if (reducedMotion) return;
   const m = main();
-  m.classList.remove('enter'); void m.offsetWidth; m.classList.add('enter');
+  m.classList.remove('enter', 'swipe'); void m.offsetWidth;
+  if (route.swipe) { m.style.setProperty('--from', route.swipe * 28 + 'px'); m.classList.add('swipe'); route.swipe = 0; }
+  m.classList.add('enter');
   // Figures count up from zero, keeping their currency and number format.
   for (const el of $$('.kpi-value', m)) {
     const parts = el.textContent.match(/^(\D*?)(-?[\d,]+(?:\.(\d+))?)(\D*)$/);
@@ -1729,6 +1733,90 @@ document.addEventListener('click', async e => {
   $('#side-foot').textContent = 'Saved on this device only';
   route();
 })();
+/* ---------- swipe gestures (phones) ---------- */
+// Swipe left/right on a main tab moves between tabs; swipe the More sheet down to close it.
+// Vertical scrolling, sideways-scrolling tables and form fields keep their normal behaviour.
+const TABS = ['', 'invoices', 'quotes', 'customers'];
+const phone = matchMedia('(max-width: 860px)');
+const tabIndex = () => TABS.indexOf(location.hash.replace(/^#\/?/, '').split('/')[0]);
+// The nearest sideways-scrolling box (wide tables on phones), if any.
+function sidewaysScroller(el) {
+  for (; el && el !== document.body; el = el.parentElement)
+    if (el.scrollWidth > el.clientWidth + 2 && /auto|scroll/.test(getComputedStyle(el).overflowX)) return el;
+  return null;
+}
+// Like a native pager: a wide table scrolls first; once it is at its edge, the swipe changes tab.
+const canScroll = (el, dx) => dx < 0 ? el.scrollLeft + el.clientWidth < el.scrollWidth - 1 : el.scrollLeft > 0;
+(function tabSwipes() {
+  const m = main();
+  let g = null;
+  const reset = () => { m.style.transition = 'transform .22s var(--ease),opacity .22s var(--ease)'; m.style.transform = ''; m.style.opacity = ''; };
+  m.addEventListener('touchstart', e => {
+    g = null;
+    if (e.touches.length !== 1 || !phone.matches || tabIndex() < 0 || dirty) return;
+    if (e.target.closest('input,textarea,select,.seg,button,details')) return;
+    const t = e.touches[0];
+    g = { x: t.clientX, y: t.clientY, t: performance.now(), dx: 0, axis: null, scroller: sidewaysScroller(e.target) };
+  }, { passive: true });
+  m.addEventListener('touchmove', e => {
+    if (!g) return;
+    const t = e.touches[0], dx = t.clientX - g.x, dy = t.clientY - g.y;
+    if (!g.axis) {
+      if (Math.hypot(dx, dy) < 10) return;
+      g.axis = Math.abs(dx) > Math.abs(dy) * 1.3 ? 'x' : 'y';
+      if (g.axis === 'y' || (g.scroller && canScroll(g.scroller, dx))) { g = null; return; } // a scroll: leave it alone
+    }
+    e.preventDefault();
+    g.dx = dx;
+    const next = tabIndex() + (dx < 0 ? 1 : -1), has = next >= 0 && next < TABS.length;
+    const shift = dx * (has ? 0.5 : 0.15); // rubber band at the first and last tab
+    m.style.transition = 'none';
+    m.style.transform = `translateX(${shift}px)`;
+    m.style.opacity = String(1 - Math.min(Math.abs(shift) / 500, 0.3));
+  }, { passive: false });
+  m.addEventListener('touchend', () => {
+    if (!g || g.axis !== 'x') { g = null; return; }
+    const dir = g.dx < 0 ? 1 : -1, next = tabIndex() + dir;
+    const fast = Math.abs(g.dx) / (performance.now() - g.t) > 0.5;
+    const go = next >= 0 && next < TABS.length && (Math.abs(g.dx) > 80 || fast);
+    g = null;
+    if (!go) return reset();
+    m.style.transition = 'transform .14s var(--ease-in),opacity .14s var(--ease-in)';
+    m.style.transform = `translateX(${-dir * 48}px)`; m.style.opacity = '0';
+    setTimeout(() => {
+      m.style.transition = m.style.transform = m.style.opacity = '';
+      route.swipe = dir;
+      location.hash = '#/' + TABS[next];
+    }, reducedMotion ? 0 : 140);
+  });
+  m.addEventListener('touchcancel', () => { if (g?.axis === 'x') reset(); g = null; });
+})();
+(function sheetSwipe() {
+  const sheet = $('#sheet');
+  let g = null;
+  sheet.addEventListener('touchstart', e => {
+    g = sheet.scrollTop > 0 ? null : { y: e.touches[0].clientY, t: performance.now(), dy: 0 };
+  }, { passive: true });
+  sheet.addEventListener('touchmove', e => {
+    if (!g) return;
+    const dy = Math.max(0, e.touches[0].clientY - g.y);
+    if (dy < 4) return;
+    e.preventDefault();
+    g.dy = dy;
+    sheet.style.transition = 'none';
+    sheet.style.transform = `translateY(${dy}px)`;
+  }, { passive: false });
+  const end = () => {
+    if (!g) return;
+    const close = g.dy > 70 || g.dy / (performance.now() - g.t) > 0.5;
+    g = null;
+    sheet.style.transition = ''; sheet.style.transform = ''; // the sheet's own transition takes it home or away
+    if (close) sheet.close();
+  };
+  sheet.addEventListener('touchend', end);
+  sheet.addEventListener('touchcancel', () => { if (g) { g.dy = 0; end(); } });
+})();
+
 // Another tab saved: pick up its changes, unless this tab is mid-edit.
 window.addEventListener('storage', e => {
   if (e.key !== KEY || dirty) return;
