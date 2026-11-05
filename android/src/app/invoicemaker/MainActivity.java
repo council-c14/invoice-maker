@@ -8,6 +8,7 @@ import android.os.Build;
 import android.os.Bundle;
 import android.print.PrintAttributes;
 import android.print.PrintManager;
+import android.view.HapticFeedbackConstants;
 import android.view.View;
 import android.view.Window;
 import android.view.WindowInsetsController;
@@ -149,6 +150,18 @@ public class MainActivity extends Activity {
         PrintManager pm = (PrintManager) getSystemService(PRINT_SERVICE);
         PrintAttributes attrs = new PrintAttributes.Builder().setMediaSize(PrintAttributes.MediaSize.ISO_A4).build();
         pm.print(title, web.createPrintDocumentAdapter(title), attrs);
+      });
+    }
+
+    /** tick, confirm or reject. Uses the system haptics, so the phone's touch-feedback setting is respected. */
+    @JavascriptInterface
+    public void haptic(String kind) {
+      runOnUiThread(() -> {
+        int c;
+        if ("confirm".equals(kind)) c = Build.VERSION.SDK_INT >= 30 ? HapticFeedbackConstants.CONFIRM : HapticFeedbackConstants.VIRTUAL_KEY;
+        else if ("reject".equals(kind)) c = Build.VERSION.SDK_INT >= 30 ? HapticFeedbackConstants.REJECT : HapticFeedbackConstants.LONG_PRESS;
+        else c = HapticFeedbackConstants.CLOCK_TICK;
+        web.performHapticFeedback(c);
       });
     }
 
