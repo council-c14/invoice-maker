@@ -24,6 +24,10 @@ Build (JDK 17+, Android SDK with `platforms;android-36` and `build-tools;36.0.0`
 ANDROID_HOME=~/android-sdk KEYSTORE=~/invoice-maker.jks KEYSTORE_PASS=... VERSION_CODE=2 VERSION_NAME=1.1 android/build.sh
 ```
 
+The app includes a home-screen widget (outstanding, overdue, collected this month, + Invoice / + Quotation).
+The page sends it a summary after every save; the widget recalculates overdue hourly from due dates.
+`build.sh` runs the widget arithmetic test (`android/test`) on the plain JVM before packaging.
+
 `build.sh` also copies the APK to `public/invoice-maker.apk`, which the website offers under **Android app**.
 
 The keystore is not in this repo. Every update must be signed with the same keystore,

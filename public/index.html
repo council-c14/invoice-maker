@@ -632,8 +632,23 @@ const docLabel = t => t === 'quote' ? 'Quotation' : 'Invoice';
 const KEY = 'invoice-maker:v1';
 const listOf = kind => (kind === 'doc' ? 'docs' : 'customers');
 function store(next) {
-  try { localStorage.setItem(KEY, JSON.stringify(next)); return true; }
+  try { localStorage.setItem(KEY, JSON.stringify(next)); syncWidget(next); return true; }
   catch { haptic('reject'); toast('Could not save: this browser’s storage is full or blocked. Download a backup from Business settings.'); return false; }
+}
+// Android home-screen widget: hand it open invoices (due date and balance) and this month's
+// collections. The widget adds them up and works out overdue itself, so it stays right as days pass.
+function syncWidget(state) {
+  if (!window.AndroidBridge?.updateWidget) return;
+  try {
+    const cur = { ...DEFAULTS, ...state.settings }.currency, month = today().slice(0, 7);
+    const billed = state.docs.filter(d => d.type === 'invoice' && !['draft', 'void'].includes(d.status));
+    const open = billed.filter(d => ['sent', 'partial', 'overdue'].includes(status(d)))
+      .map(d => `${d.due || d.date}|${totals(d).balance.toFixed(2)}`).join(';');
+    const collected = sum(billed.flatMap(d => d.payments || []).filter(p => String(p.date).startsWith(month)), p => p.amount);
+    const monthName = new Date().toLocaleDateString('en-GB', { month: 'long' });
+    const synced = new Date().toLocaleDateString('en-GB', { day: 'numeric', month: 'short' });
+    AndroidBridge.updateWidget(cur, open, collected.toFixed(2), monthName, synced);
+  } catch {}
 }
 function readStore() {
   const d = JSON.parse(localStorage.getItem(KEY) || 'null') || {};
@@ -1766,6 +1781,7 @@ document.addEventListener('click', async e => {
   navigator.storage?.persist?.(); // asks the browser not to clear the records when space runs low
   paintBrand();
   applyTheme();
+  syncWidget(db);
   if (window.AndroidBridge) $('#apk-link').remove(); // already in the app
   $('#side-foot').textContent = 'Saved on this device only';
   route();
@@ -1875,6 +1891,7 @@ const canScroll = (el, dx) => dx < 0 ? el.scrollLeft + el.clientWidth < el.scrol
     place(PULL, 0); m.style.transform = '';
     setTimeout(() => {
       try { db = readStore(); } catch {}
+      syncWidget(db);
       paintBrand();
       route.last = null; // play the page entrance again
       route();

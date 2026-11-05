@@ -2,4 +2,12 @@
 <resources>
   <color name="bg">#F5F5F2</color>
   <color name="brand">#1F5C4A</color>
+  <color name="widget_bg">#FFFFFF</color>
+  <color name="widget_ink">#1B1B19</color>
+  <color name="widget_muted">#72726B</color>
+  <color name="widget_danger">#A5321E</color>
+  <color name="widget_btn">#F1F1ED</color>
+  <color name="widget_primary">#1B1B19</color>
+  <color name="widget_on_primary">#FFFFFF</color>
+  <color name="widget_line">#E3E2DC</color>
 </resources>

@@ -11,6 +11,11 @@ BT=$ANDROID_HOME/build-tools/36.0.0
 JAR=$ANDROID_HOME/platforms/android-36/android.jar
 
 rm -rf build && mkdir -p build/gen build/classes build/assets
+
+# Widget arithmetic has no Android imports: test it on the plain JVM before packaging.
+mkdir -p build/test
+javac -Xlint:-options --release 11 -d build/test src/app/invoicemaker/WidgetMath.java test/app/invoicemaker/WidgetMathTest.java
+java -cp build/test app.invoicemaker.WidgetMathTest > /dev/null
 cp ../public/index.html build/assets/index.html
 
 "$BT/aapt2" compile --dir res -o build/res.zip

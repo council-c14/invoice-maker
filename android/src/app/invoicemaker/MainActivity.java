@@ -84,7 +84,22 @@ public class MainActivity extends Activity {
     }
 
     if (state != null) web.restoreState(state);
-    else web.loadUrl("file:///android_asset/index.html");
+    else web.loadUrl("file:///android_asset/index.html#/" + routeOf(getIntent()));
+  }
+
+  /** Widget buttons open a screen: invoicemaker://open/new/invoice -> #/new/invoice. Only plain paths are accepted. */
+  private static String routeOf(Intent i) {
+    Uri u = i == null ? null : i.getData();
+    if (u == null || !"invoicemaker".equals(u.getScheme())) return "";
+    String path = u.getPath() == null ? "" : u.getPath().replaceFirst("^/", "");
+    return path.matches("[a-z/]{0,40}") ? path : "";
+  }
+
+  @Override
+  protected void onNewIntent(Intent intent) {
+    super.onNewIntent(intent);
+    setIntent(intent);
+    if (intent.getData() != null) web.evaluateJavascript("location.hash = '#/" + routeOf(intent) + "'", null);
   }
 
   /** Matches the window, status bar and navigation bar to the page's light or dark theme. */
@@ -163,6 +178,15 @@ public class MainActivity extends Activity {
         else c = HapticFeedbackConstants.CLOCK_TICK;
         web.performHapticFeedback(c);
       });
+    }
+
+    /** The page's summary for the home-screen widget, sent after every save. */
+    @JavascriptInterface
+    public void updateWidget(String currency, String open, String collected, String month, String synced) {
+      getSharedPreferences(InvoiceWidget.PREFS, MODE_PRIVATE).edit()
+          .putString("cur", currency).putString("open", open).putString("collected", collected)
+          .putString("month", month).putString("synced", synced).apply();
+      InvoiceWidget.refreshAll(getApplicationContext());
     }
 
     @JavascriptInterface
