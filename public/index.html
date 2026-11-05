@@ -159,7 +159,6 @@ details.menu summary::-webkit-details-marker{display:none}
 
 /* Dialog and toast */
 dialog{border:0;border-radius:10px;padding:0;width:min(520px,calc(100% - 32px));box-shadow:0 24px 60px rgba(20,20,15,.25);color:var(--ink)}
-dialog::backdrop{background:rgba(28,28,24,.35)}
 .dlg-head{padding:16px 20px;border-bottom:1px solid var(--line);font-weight:600;font-size:15px}
 .dlg-body{padding:18px 20px;display:grid;gap:14px}
 .dlg-foot{padding:12px 20px;border-top:1px solid var(--line);display:flex;justify-content:flex-end;gap:8px;background:#fafaf8;border-radius:0 0 10px 10px}
@@ -418,6 +417,43 @@ dialog::backdrop{background:rgba(28,28,24,.35)}
 .tpl-report .rt td{padding:1.8mm 1.5mm;border-bottom:1px solid #e6e6e1}
 .tpl-report .rt th.r{text-align:right}
 .tpl-report .rt tfoot td{font-weight:700;border-top:1px solid #1d1d1b;border-bottom:0}
+
+/* Motion: short, eased, never in the way. Reduced-motion users get none of it. */
+:root{--ease:cubic-bezier(.2,.8,.2,1);--ease-in:cubic-bezier(.4,0,1,1)}
+html{-webkit-tap-highlight-color:transparent}
+.btn,.seg button,.seg a,.nav a,.tabs a,.menu-list button,.icon-x,.inp,label.f :is(input,select,textarea){transition:background-color .16s var(--ease),border-color .16s var(--ease),color .16s var(--ease),box-shadow .16s var(--ease),transform .12s var(--ease)}
+.btn:active,.icon-x:active{transform:scale(.97)}
+.nav a:active{transform:scale(.98)}
+.t td{transition:background-color .14s var(--ease)}
+main.enter > *{animation:rise .42s var(--ease) both}
+main.enter > :nth-child(2){animation-delay:.04s}
+main.enter > :nth-child(3){animation-delay:.08s}
+main.enter > :nth-child(4){animation-delay:.12s}
+main.enter > :nth-child(n+5){animation-delay:.16s}
+@keyframes rise{from{opacity:0;transform:translateY(8px)}to{opacity:1;transform:none}}
+@keyframes fade{from{opacity:0}to{opacity:1}}
+@keyframes pop{from{opacity:0;transform:translateY(-4px) scale(.98)}to{opacity:1;transform:none}}
+@keyframes row-in{from{opacity:0;transform:translateY(-6px)}to{opacity:1;transform:none}}
+/* Dialogs close instantly (the page is usable at once) and fade out while still drawn in the top layer. */
+dialog{opacity:0;transform:translateY(6px) scale(.98);transition:opacity .15s var(--ease-in),transform .15s var(--ease-in),overlay .15s allow-discrete,display .15s allow-discrete}
+dialog[open]{opacity:1;transform:none;transition-duration:.24s;transition-timing-function:var(--ease)}
+@starting-style{dialog[open]{opacity:0;transform:translateY(10px) scale(.97)}}
+dialog::backdrop{background:rgba(28,28,24,0);transition:background-color .2s var(--ease),overlay .2s allow-discrete,display .2s allow-discrete}
+dialog[open]::backdrop{background:rgba(28,28,24,.35)}
+@starting-style{dialog[open]::backdrop{background:rgba(28,28,24,0)}}
+details.menu[open] .menu-list{animation:pop .16s var(--ease);transform-origin:top right}
+.paper-wrap .paper{animation:fade .3s var(--ease)}
+#items tr.row-in{animation:row-in .22s var(--ease)}
+#items tr.row-out{opacity:0;transform:translateX(12px);transition:opacity .16s var(--ease-in),transform .16s var(--ease-in)}
+.err:not([hidden]){animation:pop .2s var(--ease)}
+#toast{transition:opacity .2s var(--ease),transform .25s var(--ease)}
+@media (hover:hover){
+  .thumbs > .card{transition:transform .22s var(--ease),box-shadow .22s var(--ease)}
+  .thumbs > .card:hover{transform:translateY(-3px);box-shadow:0 14px 32px rgba(20,20,15,.09)}
+}
+@media (prefers-reduced-motion:reduce){
+  *,*::before,*::after{animation-duration:.01ms!important;animation-delay:0s!important;transition-duration:.01ms!important}
+}
 
 #print{display:none}
 @media print{
@@ -796,17 +832,20 @@ function printPaper(html, title) {
 }
 
 /* ---------- dialogs ---------- */
+const reducedMotion = matchMedia('(prefers-reduced-motion: reduce)').matches;
+const closeDialog = () => $('#dlg').close();
 function modal(title, body, { ok = 'Save', danger = false, onSubmit } = {}) {
   const dlg = $('#dlg');
+  if (dlg.open) dlg.close();
   dlg.innerHTML = `<form novalidate><div class="dlg-head">${title}</div><div class="dlg-body">${body}<div class="err" hidden></div></div>
     <div class="dlg-foot"><button type="button" class="btn" data-close>Cancel</button><button class="btn primary${danger ? ' danger-bg' : ''}" ${danger ? 'style="background:var(--danger);border-color:var(--danger)"' : ''}>${ok}</button></div></form>`;
   const form = $('form', dlg);
-  $('[data-close]', dlg).onclick = () => dlg.close();
+  $('[data-close]', dlg).onclick = closeDialog;
   form.onsubmit = async e => {
     e.preventDefault();
     const msg = await onSubmit?.(Object.fromEntries(new FormData(form)), form);
-    if (typeof msg === 'string') { const el = $('.err', dlg); el.textContent = msg; el.hidden = false; return; }
-    dlg.close();
+    if (typeof msg === 'string') { const el = $('.err', dlg); el.hidden = true; el.textContent = msg; void el.offsetWidth; el.hidden = false; return; }
+    closeDialog();
   };
   dlg.showModal();
   $('input,select,textarea', form)?.focus();
@@ -1076,8 +1115,13 @@ function vEdit(id, type, customerId) {
     e.target.value = draft.customerId;
     customerDialog({}, c => { draft.customerId = c.id; dirty = true; $('#cust-sel').innerHTML = customerOptions(); });
   };
-  vEdit.addItem = () => { draft.items.push({ desc: '', qty: 1, rate: 0 }); dirty = true; drawItems(); drawSum(); $$('#items textarea').at(-1).focus(); };
-  vEdit.delItem = i => { draft.items.splice(i, 1); if (!draft.items.length) draft.items.push({ desc: '', qty: 1, rate: 0 }); dirty = true; drawItems(); drawSum(); };
+  vEdit.addItem = () => { draft.items.push({ desc: '', qty: 1, rate: 0 }); dirty = true; drawItems(); drawSum(); $$('#items tr').at(-1).classList.add('row-in'); $$('#items textarea').at(-1).focus(); };
+  vEdit.delItem = i => {
+    const row = $$('#items tr')[i];
+    const remove = () => { draft.items.splice(i, 1); if (!draft.items.length) draft.items.push({ desc: '', qty: 1, rate: 0 }); dirty = true; drawItems(); drawSum(); };
+    if (reducedMotion || !row) return remove();
+    row.classList.add('row-out'); setTimeout(remove, 160);
+  };
 }
 async function saveDoc() {
   const d = draft;
@@ -1505,7 +1549,25 @@ function route() {
     templates: vTemplates, settings: vSettings,
   };
   (views[view] || notFound)();
-  window.scrollTo(0, 0);
+  if (location.hash !== route.last) { route.last = location.hash; window.scrollTo(0, 0); enterAnimation(); }
+}
+function enterAnimation() {
+  if (reducedMotion) return;
+  const m = main();
+  m.classList.remove('enter'); void m.offsetWidth; m.classList.add('enter');
+  // Figures count up from zero, keeping their currency and number format.
+  for (const el of $$('.kpi-value', m)) {
+    const parts = el.textContent.match(/^(\D*?)(-?[\d,]+(?:\.(\d+))?)(\D*)$/);
+    if (!parts) continue;
+    const [, pre, num, dec = '', post] = parts, target = +num.replace(/,/g, ''), start = performance.now();
+    const fmt = v => pre + v.toLocaleString('en-US', { minimumFractionDigits: dec.length, maximumFractionDigits: dec.length }) + post;
+    const step = now => {
+      const k = Math.min(1, (now - start) / 700), e = 1 - Math.pow(1 - k, 3);
+      el.textContent = fmt(target * e);
+      if (k < 1 && el.isConnected) requestAnimationFrame(step);
+    };
+    if (target) requestAnimationFrame(step);
+  }
 }
 
 let lastHash = location.hash;
