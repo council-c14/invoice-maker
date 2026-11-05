@@ -104,8 +104,12 @@ public class MainActivity extends Activity {
     }
   }
 
+  /** Back closes an open sheet, dialog or menu first; then it goes back a page, then it leaves the app. */
   private void goBack() {
-    if (web.canGoBack()) web.goBack(); else finish();
+    web.evaluateJavascript("window.handleBack ? handleBack() : false", handled -> {
+      if ("true".equals(handled)) return;
+      if (web.canGoBack()) web.goBack(); else finish();
+    });
   }
 
   @Override
