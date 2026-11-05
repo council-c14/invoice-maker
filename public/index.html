@@ -34,10 +34,10 @@ h1,h2,h3{margin:0;font-weight:600;letter-spacing:-.01em}
 #app{display:grid;grid-template-columns:224px 1fr;min-height:100vh}
 .side{background:var(--side);border-right:1px solid var(--line);padding:18px 12px;position:sticky;top:0;height:100vh;display:flex;flex-direction:column;gap:2px}
 .biz{display:flex;align-items:center;gap:10px;padding:2px 8px 18px}
-.biz-mark{width:28px;height:28px;border-radius:5px;background:var(--ink);color:#fff;display:grid;place-items:center;font-weight:700;font-size:13px;flex:none;overflow:hidden}
-.biz-mark img{width:100%;height:100%;object-fit:contain;background:#fff}
+.biz-mark{width:32px;height:32px;flex:none}
+.biz-mark svg{width:100%;height:100%;display:block}
 .biz-name{font-weight:600;font-size:13px;line-height:1.2;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
-.biz-sub{font-size:11px;color:var(--muted)}
+.biz-sub{font-size:11px;color:var(--muted);overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
 .nav a{display:flex;align-items:center;gap:10px;padding:7px 10px;border-radius:5px;color:var(--ink-2);font-weight:500}
 .nav a:hover{background:#e4e4df;text-decoration:none}
 .nav a.on{background:var(--panel);color:var(--ink);box-shadow:0 0 0 1px var(--line)}
@@ -454,7 +454,7 @@ dialog::backdrop{background:rgba(28,28,24,.35)}
 <body>
 <div id="app">
   <aside class="side">
-    <div class="biz"><div class="biz-mark" id="biz-mark"></div><div style="min-width:0"><div class="biz-name" id="biz-name"></div><div class="biz-sub">Invoice Maker</div></div></div>
+    <a class="biz" href="#/" style="color:inherit;text-decoration:none"><div class="biz-mark"><svg viewBox="0 0 512 512" aria-hidden="true"><defs><linearGradient id="im-bg" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#2b7a62"/><stop offset="1" stop-color="#123d31"/></linearGradient><linearGradient id="im-paper" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#ffffff"/><stop offset="1" stop-color="#eef3f0"/></linearGradient><filter id="im-shadow" x="-30%" y="-30%" width="160%" height="160%"><feDropShadow dx="0" dy="10" stdDeviation="14" flood-color="#061a14" flood-opacity=".35"/></filter></defs><g id="im-background"><rect width="512" height="512" rx="112" fill="url(#im-bg)"/><circle cx="430" cy="70" r="190" fill="#ffffff" opacity=".05"/></g><g id="im-foreground"><g filter="url(#im-shadow)"><path d="M156 112h146l66 66v210a24 24 0 0 1-24 24H156a24 24 0 0 1-24-24V136a24 24 0 0 1 24-24z" fill="url(#im-paper)"/><path d="M302 112v42a24 24 0 0 0 24 24h42z" fill="#c9ddd4"/></g><rect x="166" y="150" width="92" height="16" rx="8" fill="#1f5c4a"/><rect x="166" y="204" width="168" height="10" rx="5" fill="#c4d3cc"/><rect x="166" y="232" width="132" height="10" rx="5" fill="#c4d3cc"/><rect x="166" y="260" width="150" height="10" rx="5" fill="#c4d3cc"/><rect x="166" y="306" width="168" height="2" fill="#dbe5e0"/><rect x="252" y="326" width="82" height="16" rx="8" fill="#1f5c4a"/><circle cx="352" cy="384" r="58" fill="#7fdcb5" stroke="#123d31" stroke-width="10"/><path d="M326 385l18 18 36-38" fill="none" stroke="#123d31" stroke-width="14" stroke-linecap="round" stroke-linejoin="round"/></g></svg></div><div style="min-width:0"><div class="biz-name">Invoice Maker</div><div class="biz-sub" id="biz-sub"></div></div></a>
     <nav class="nav" id="nav">
       <a href="#/" data-nav=""><svg viewBox="0 0 24 24"><path d="M3 12l9-8 9 8M5 10v10h14V10"/></svg>Overview</a>
       <a href="#/invoices" data-nav="invoices doc-invoice"><svg viewBox="0 0 24 24"><path d="M6 2h9l5 5v15H6z"/><path d="M14 2v6h6M9 13h7M9 17h7"/></svg>Invoices</a>
@@ -1490,8 +1490,7 @@ function notFound() { main().innerHTML = empty('Not found', 'This record may hav
 /* ---------- routing and events ---------- */
 function paintBrand() {
   const s = S();
-  $('#biz-name').textContent = s.name;
-  $('#biz-mark').innerHTML = s.logo ? `<img src="${esc(s.logo)}" alt="">` : esc((s.name.match(/\b\w/g) || ['B']).slice(0, 2).join('').toUpperCase());
+  $('#biz-sub').textContent = s.name;
   document.title = `${s.name} · Invoice Maker`;
 }
 function route() {
