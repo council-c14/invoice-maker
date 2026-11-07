@@ -589,6 +589,11 @@ dialog.sheet[open]{transform:none;transition:transform .32s var(--ease),overlay 
 <div id="toast" role="status"></div>
 
 <script>
+/* ---------- native app bridge ---------- */
+// The Android app injects window.AndroidBridge, the iOS app window.NativeBridge. Same methods:
+// print, saveFile, haptic, setDark, updateWidget. Absent in a browser.
+const native = window.NativeBridge || window.AndroidBridge || null;
+
 /* ---------- helpers ---------- */
 const $ = (s, r = document) => r.querySelector(s);
 const $$ = (s, r = document) => [...r.querySelectorAll(s)];
@@ -644,7 +649,7 @@ function store(next) {
 // Android home-screen widget: hand it open invoices (due date and balance) and this month's
 // collections. The widget adds them up and works out overdue itself, so it stays right as days pass.
 function syncWidget(state) {
-  if (!window.AndroidBridge?.updateWidget) return;
+  if (!native?.updateWidget) return;
   try {
     const cur = { ...DEFAULTS, ...state.settings }.currency, month = today().slice(0, 7);
     const billed = state.docs.filter(d => d.type === 'invoice' && !['draft', 'void'].includes(d.status));
@@ -653,7 +658,7 @@ function syncWidget(state) {
     const collected = sum(billed.flatMap(d => d.payments || []).filter(p => String(p.date).startsWith(month)), p => p.amount);
     const monthName = new Date().toLocaleDateString('en-GB', { month: 'long' });
     const synced = new Date().toLocaleDateString('en-GB', { day: 'numeric', month: 'short' });
-    AndroidBridge.updateWidget(cur, open, collected.toFixed(2), monthName, synced);
+    native.updateWidget(cur, open, collected.toFixed(2), monthName, synced);
   } catch {}
 }
 function readStore() {
@@ -920,7 +925,7 @@ function printPaper(html, title) {
   const old = document.title;
   document.title = title; // becomes the PDF file name in most browsers
   // The Android app has no window.print(); its bridge opens the system print dialog (Save as PDF).
-  if (window.AndroidBridge) AndroidBridge.print(title); else window.print();
+  if (native) native.print(title); else window.print();
   document.title = old;
 }
 
@@ -943,7 +948,7 @@ function applyTheme() {
   $('meta[name=theme-color]').content = dark ? '#121211' : '#f5f5f2';
   const btn = $('#theme-btn');
   if (btn) { btn.innerHTML = dark ? ICON_SUN : ICON_MOON; btn.title = dark ? 'Switch to light' : 'Switch to dark'; }
-  try { window.AndroidBridge?.setDark?.(dark); } catch {}
+  try { native?.setDark?.(dark); } catch {}
 }
 function setTheme(t) {
   try { t === 'system' ? localStorage.removeItem(THEME_KEY) : localStorage.setItem(THEME_KEY, t); } catch {}
@@ -964,7 +969,7 @@ const VIBRATE = { tick: 8, confirm: [12, 60, 18], reject: [30, 50, 30] };
 function haptic(kind = 'tick') {
   if (!hapticsOn()) return;
   try {
-    if (window.AndroidBridge?.haptic) AndroidBridge.haptic(kind);
+    if (native?.haptic) native.haptic(kind);
     else if (navigator.vibrate && matchMedia('(pointer: coarse)').matches) navigator.vibrate(VIBRATE[kind] || 8);
   } catch {}
 }
@@ -1084,7 +1089,7 @@ function downloadCSV(name, rows) {
 }
 // Browsers download a blob; the Android app asks where to save through its bridge.
 function saveText(name, mime, text) {
-  if (window.AndroidBridge) return AndroidBridge.saveFile(name, mime, text);
+  if (native) return native.saveFile(name, mime, text);
   if (isIOS && navigator.canShare) {
     const file = new File([text], name, { type: mime });
     if (navigator.canShare({ files: [file] })) return navigator.share({ files: [file] }).catch(() => {});
@@ -1815,7 +1820,7 @@ document.addEventListener('click', async e => {
   applyTheme();
   syncWidget(db);
   // Downloads: none inside an installed app, otherwise only the one for this device.
-  if (window.AndroidBridge || installed) { $('#apk-link').remove(); $('#ios-link').remove(); }
+  if (native || installed) { $('#apk-link').remove(); $('#ios-link').remove(); }
   else if (isIOS) $('#apk-link').remove();
   else if (isAndroid) $('#ios-link').remove();
   // Offline support for the installed web app (not needed inside the Android app, which runs from its own files).

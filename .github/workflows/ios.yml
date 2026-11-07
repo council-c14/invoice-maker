@@ -1,0 +1,30 @@
+name: iOS build
+# Compiles the iPhone/iPad app and its widget on a Mac (unsigned, for the simulator) and runs the
+# widget arithmetic tests. Signing and App Store upload need an Apple Developer account (see README).
+on:
+  push:
+    branches: [main]
+    paths: ["ios/**", "public/index.html", ".github/workflows/ios.yml"]
+  pull_request:
+    paths: ["ios/**", "public/index.html", ".github/workflows/ios.yml"]
+  workflow_dispatch:
+
+jobs:
+  build:
+    runs-on: macos-15
+    steps:
+      - uses: actions/checkout@v4
+      - name: Widget arithmetic tests
+        run: |
+          swiftc -o "$RUNNER_TEMP/widget-math" ios/Shared/WidgetMath.swift ios/Tests/main.swift
+          "$RUNNER_TEMP/widget-math"
+      - name: Generate the Xcode project
+        run: |
+          brew install xcodegen
+          cd ios && xcodegen
+      - name: Build app and widget (iOS Simulator, unsigned)
+        run: |
+          set -o pipefail
+          cd ios
+          xcodebuild -project InvoiceMaker.xcodeproj -target InvoiceMaker -sdk iphonesimulator \
+            -configuration Debug CODE_SIGNING_ALLOWED=NO build | tail -60

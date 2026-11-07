@@ -17,7 +17,22 @@ integration, so every push to `main` deploys.
 The site is an installable web app: in Safari, **Share → Add to Home Screen** gives an Invoice Maker icon that
 opens full screen and works offline (`manifest.webmanifest`, `sw.js`, `apple-touch-icon.png`). The **iPhone app**
 item on the site shows these steps. On iPhone, CSV and backup files open the share sheet (Save to Files).
-A native App Store build needs a Mac with Xcode and an Apple Developer account, so it is not in this repo.
+
+### Native iOS app with Home Screen widget (`ios/`)
+
+A small SwiftUI app that runs the same `public/index.html` in WebKit, plus a WidgetKit widget
+(small: outstanding and overdue; medium: also collected this month, + Invoice and + Quotation).
+The page sends the widget a summary after every save through an app group; the widget recalculates
+overdue at midnight. Printing uses AirPrint (or Save as PDF); CSV and backups use the share sheet.
+
+GitHub Actions (`.github/workflows/ios.yml`) builds it on a Mac for the simulator and runs the widget
+arithmetic tests on every change. To install it on an iPhone or publish it you need a Mac with Xcode and an
+Apple Developer account:
+
+1. `brew install xcodegen`, then `cd ios && xcodegen` and open `InvoiceMaker.xcodeproj`.
+2. Set your team on both targets, and change the bundle IDs (`app.invoicemaker`, `app.invoicemaker.widget`)
+   and the app group (`group.app.invoicemaker`) to ones registered to your account.
+3. Run on your iPhone, or Product → Archive to upload to TestFlight / the App Store.
 
 ## Android app
 
