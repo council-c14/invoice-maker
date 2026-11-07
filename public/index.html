@@ -2,10 +2,15 @@
 <html lang="en">
 <head>
 <meta charset="utf-8">
-<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <title>Invoice Maker</title>
 <link rel="icon" href="icon-192.png">
-<link rel="apple-touch-icon" href="icon-192.png">
+<link rel="apple-touch-icon" href="apple-touch-icon.png">
+<link rel="manifest" href="manifest.webmanifest">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-title" content="Invoice Maker">
+<meta name="apple-mobile-web-app-status-bar-style" content="default">
 <meta name="theme-color" content="#f5f5f2">
 <script>try { const t = localStorage.getItem('invoice-maker:theme'); if (t === 'light' || t === 'dark') document.documentElement.dataset.theme = t; } catch {}</script>
 <style>
@@ -531,12 +536,12 @@ dialog.sheet[open]{transform:none;transition:transform .32s var(--ease),overlay 
   #app{grid-template-columns:1fr;align-content:start}
   .t td{white-space:nowrap}
   /* slim top bar: logo, name, theme toggle */
-  .side{position:sticky;height:auto;flex-direction:row;align-items:center;padding:8px 8px 8px 14px;z-index:10;border-right:0;border-bottom:1px solid var(--line);background:var(--side)} /* no backdrop-filter here: it would trap the fixed bottom bar inside this header */
+  .side{position:sticky;height:auto;flex-direction:row;align-items:center;padding:calc(8px + env(safe-area-inset-top)) max(8px, env(safe-area-inset-right)) 8px max(14px, env(safe-area-inset-left));z-index:10;border-right:0;border-bottom:1px solid var(--line);background:var(--side)} /* no backdrop-filter here: it would trap the fixed bottom bar inside this header */
   .side-top{align-items:center;flex:1}.biz{padding:0;flex:1}.biz-sub,.nav-label,.side-foot{display:none}
   .biz-mark{width:28px;height:28px}.biz-name{font-size:15px}
   /* bottom tab bar */
   .nav{position:fixed;left:0;right:0;bottom:0;z-index:20;display:grid;grid-template-columns:repeat(5,1fr);gap:0;
-    padding:6px 4px calc(6px + env(safe-area-inset-bottom));border-top:1px solid var(--line);
+    padding:6px max(4px, env(safe-area-inset-right)) calc(6px + env(safe-area-inset-bottom)) max(4px, env(safe-area-inset-left));border-top:1px solid var(--line);
     background:color-mix(in srgb,var(--panel) 90%,transparent);-webkit-backdrop-filter:blur(16px);backdrop-filter:blur(16px)}
   .nav .nav-x{display:none}
   .nav a,.nav .nav-more{display:flex;flex-direction:column;align-items:center;justify-content:center;gap:3px;padding:4px 0 2px;border:0;border-radius:12px;
@@ -544,7 +549,7 @@ dialog.sheet[open]{transform:none;transition:transform .32s var(--ease),overlay 
   .nav svg{width:22px;height:22px;padding:3px 14px;box-sizing:content-box;border-radius:999px;opacity:1;transition:background-color .22s var(--ease),color .22s var(--ease)}
   .nav .on{color:var(--ink)}
   .nav .on svg{background:var(--accent-weak);color:var(--accent-ink)}
-  main{padding:20px 16px calc(96px + env(safe-area-inset-bottom))}
+  main{padding:20px max(16px, env(safe-area-inset-right)) calc(96px + env(safe-area-inset-bottom)) max(16px, env(safe-area-inset-left))}
   #toast{bottom:calc(86px + env(safe-area-inset-bottom))}
   .kpis,.grid4{grid-template-columns:1fr 1fr}
   .kpi:nth-child(3){border-left:0}
@@ -570,6 +575,7 @@ dialog.sheet[open]{transform:none;transition:transform .32s var(--ease),overlay 
       <a class="nav-x" href="#/templates" data-nav="templates"><svg viewBox="0 0 24 24"><rect x="3" y="3" width="7" height="9"/><rect x="14" y="3" width="7" height="5"/><rect x="14" y="12" width="7" height="9"/><rect x="3" y="16" width="7" height="5"/></svg>Templates</a>
       <a class="nav-x" href="#/settings" data-nav="settings"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.7 1.7 0 00.3 1.8l.1.1a2 2 0 11-2.8 2.8l-.1-.1a1.7 1.7 0 00-1.8-.3 1.7 1.7 0 00-1 1.5V21a2 2 0 11-4 0v-.1a1.7 1.7 0 00-1.1-1.5 1.7 1.7 0 00-1.8.3l-.1.1a2 2 0 11-2.8-2.8l.1-.1a1.7 1.7 0 00.3-1.8 1.7 1.7 0 00-1.5-1H3a2 2 0 110-4h.1a1.7 1.7 0 001.5-1.1 1.7 1.7 0 00-.3-1.8l-.1-.1a2 2 0 112.8-2.8l.1.1a1.7 1.7 0 001.8.3H9a1.7 1.7 0 001-1.5V3a2 2 0 114 0v.1a1.7 1.7 0 001 1.5 1.7 1.7 0 001.8-.3l.1-.1a2 2 0 112.8 2.8l-.1.1a1.7 1.7 0 00-.3 1.8V9a1.7 1.7 0 001.5 1H21a2 2 0 110 4h-.1a1.7 1.7 0 00-1.5 1z"/></svg>Business settings</a>
       <a class="nav-x" href="invoice-maker.apk" download="Invoice-Maker.apk" data-nav="apk" id="apk-link" title="Download Invoice Maker for Android (APK)"><svg viewBox="0 0 24 24"><rect x="6" y="2" width="12" height="20" rx="2"/><path d="M12 7v7M9 11l3 3 3-3M10 18h4"/></svg>Android app</a>
+      <a class="nav-x" href="#" data-act="ios-install" data-nav="ios" id="ios-link" title="Install Invoice Maker on iPhone or iPad"><svg viewBox="0 0 24 24"><rect x="6" y="2" width="12" height="20" rx="3"/><path d="M10 5h4M12 9v6M9 12l3 3 3-3"/></svg>iPhone app</a>
       <button class="nav-more" data-act="more" data-nav="reports report templates settings" aria-label="More"><svg viewBox="0 0 24 24"><circle cx="5" cy="12" r="1.4"/><circle cx="12" cy="12" r="1.4"/><circle cx="19" cy="12" r="1.4"/></svg>More</button>
     </nav>
     <div class="side-foot" id="side-foot"></div>
@@ -920,6 +926,9 @@ function printPaper(html, title) {
 
 /* ---------- dialogs ---------- */
 const reducedMotion = matchMedia('(prefers-reduced-motion: reduce)').matches;
+const isIOS = /iPad|iPhone|iPod/.test(navigator.userAgent) || (navigator.platform === 'MacIntel' && navigator.maxTouchPoints > 1);
+const isAndroid = /Android/.test(navigator.userAgent);
+const installed = navigator.standalone === true || matchMedia('(display-mode: standalone)').matches;
 
 /* ---------- theme ---------- */
 // A per-device preference, kept outside the records (and outside backups).
@@ -965,13 +974,14 @@ function setHaptics(on) {
   if (on) haptic('confirm');
 }
 const closeDialog = () => $('#dlg').close();
-function modal(title, body, { ok = 'Save', danger = false, onSubmit } = {}) {
+function modal(title, body, { ok = 'Save', danger = false, onSubmit, cancel = true } = {}) {
   const dlg = $('#dlg');
   if (dlg.open) dlg.close();
   dlg.innerHTML = `<form novalidate><div class="dlg-head">${title}</div><div class="dlg-body">${body}<div class="err" hidden></div></div>
-    <div class="dlg-foot"><button type="button" class="btn" data-close>Cancel</button><button class="btn primary${danger ? ' danger-bg' : ''}" ${danger ? 'style="background:var(--danger);border-color:var(--danger)"' : ''}>${ok}</button></div></form>`;
+    <div class="dlg-foot">${cancel ? '<button type="button" class="btn" data-close>Cancel</button>' : ''}<button class="btn primary${danger ? ' danger-bg' : ''}" ${danger ? 'style="background:var(--danger);border-color:var(--danger)"' : ''}>${ok}</button></div></form>`;
   const form = $('form', dlg);
-  $('[data-close]', dlg).onclick = closeDialog;
+  const close = $('[data-close]', dlg);
+  if (close) close.onclick = closeDialog;
   form.onsubmit = async e => {
     e.preventDefault();
     const msg = await onSubmit?.(Object.fromEntries(new FormData(form)), form);
@@ -1075,6 +1085,10 @@ function downloadCSV(name, rows) {
 // Browsers download a blob; the Android app asks where to save through its bridge.
 function saveText(name, mime, text) {
   if (window.AndroidBridge) return AndroidBridge.saveFile(name, mime, text);
+  if (isIOS && navigator.canShare) {
+    const file = new File([text], name, { type: mime });
+    if (navigator.canShare({ files: [file] })) return navigator.share({ files: [file] }).catch(() => {});
+  }
   const a = document.createElement('a');
   a.href = URL.createObjectURL(new Blob([text], { type: mime }));
   a.download = name; a.click();
@@ -1682,6 +1696,22 @@ window.handleBack = () => {
   return false;
 };
 
+// iPhone/iPad apps can only be installed from the App Store; a web app is added from the Share menu instead.
+function iosInstall() {
+  const share = '<svg viewBox="0 0 24 24" style="width:18px;height:18px;vertical-align:-3px;stroke:var(--accent);fill:none;stroke-width:1.8;stroke-linecap:round;stroke-linejoin:round"><path d="M12 3v12M8 7l4-4 4 4M6 11H5a1 1 0 00-1 1v8a1 1 0 001 1h14a1 1 0 001-1v-8a1 1 0 00-1-1h-1"/></svg>';
+  const step = (n, t) => `<div style="display:flex;gap:12px;align-items:flex-start"><span style="flex:none;width:24px;height:24px;border-radius:50%;background:var(--accent-weak);color:var(--accent-ink);display:grid;place-items:center;font-weight:600;font-size:13px">${n}</span><div style="padding-top:2px">${t}</div></div>`;
+  const url = location.origin + location.pathname;
+  const steps = isIOS
+    ? `${step(1, `Tap ${share} <strong>Share</strong> in the browser toolbar.`)}${step(2, 'Scroll down and tap <strong>Add to Home Screen</strong>.')}${step(3, 'Tap <strong>Add</strong>. Invoice Maker appears on your Home Screen.')}`
+    : `${step(1, `On your iPhone or iPad, open <strong>${esc(url)}</strong> in Safari.`)}${step(2, `Tap ${share} <strong>Share</strong>, then <strong>Add to Home Screen</strong>.`)}${step(3, 'Tap <strong>Add</strong>.')}`;
+  modal('Install on iPhone or iPad', `
+    <div style="display:flex;align-items:center;gap:14px"><img src="apple-touch-icon.png" alt="" style="width:56px;height:56px;border-radius:13px;box-shadow:0 2px 8px var(--shadow)">
+      <div><div class="strong">Invoice Maker</div><div class="muted small">Opens full screen from your Home Screen and works offline</div></div></div>
+    ${steps}
+    <p class="muted small" style="margin:0">Records stay on that iPhone or iPad. The Home Screen app keeps its own records, separate from Safari, so use <strong>Business settings → Download backup / Restore backup</strong> to bring records across.</p>`,
+    { ok: 'Done', cancel: false, onSubmit: () => {} });
+}
+
 function notFound() { main().innerHTML = empty('Not found', 'This record may have been deleted.', '<a class="btn" href="#/">Back to overview</a>'); }
 
 /* ---------- routing and events ---------- */
@@ -1733,6 +1763,7 @@ window.addEventListener('hashchange', () => {
 window.addEventListener('beforeunload', e => { if (dirty) e.preventDefault(); });
 
 document.addEventListener('click', async e => {
+  if (e.target.closest('[data-act=ios-install]')) e.preventDefault();
   if (e.target.closest('#nav a, #nav .nav-more, #sheet a, .seg button, .theme-btn') && matchMedia('(max-width: 860px)').matches) haptic();
   const row = e.target.closest('tr[data-href]');
   if (row && !e.target.closest('a,button')) return (location.hash = row.dataset.href);
@@ -1765,6 +1796,7 @@ document.addEventListener('click', async e => {
   if (act === 'theme') return setTheme(v);
   if (act === 'haptics') return setHaptics(v === 'on');
   if (act === 'more') return openSheet();
+  if (act === 'ios-install') return iosInstall();
   if (act === 'theme-toggle') return setTheme(isDark() ? 'light' : 'dark');
   if (act === 'backup') {
     return saveText(`invoice-maker-backup-${today()}.json`, 'application/json', JSON.stringify(db, null, 2));
@@ -1782,7 +1814,12 @@ document.addEventListener('click', async e => {
   paintBrand();
   applyTheme();
   syncWidget(db);
-  if (window.AndroidBridge) $('#apk-link').remove(); // already in the app
+  // Downloads: none inside an installed app, otherwise only the one for this device.
+  if (window.AndroidBridge || installed) { $('#apk-link').remove(); $('#ios-link').remove(); }
+  else if (isIOS) $('#apk-link').remove();
+  else if (isAndroid) $('#ios-link').remove();
+  // Offline support for the installed web app (not needed inside the Android app, which runs from its own files).
+  if ('serviceWorker' in navigator && (location.protocol === 'https:' || location.hostname === 'localhost')) navigator.serviceWorker.register('sw.js').catch(() => {});
   $('#side-foot').textContent = 'Saved on this device only';
   route();
 })();

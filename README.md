@@ -12,6 +12,13 @@ another device or browser.
 Served as a static Cloudflare Worker. The Worker is connected to this repo through Cloudflare's Git
 integration, so every push to `main` deploys.
 
+## iPhone and iPad
+
+The site is an installable web app: in Safari, **Share → Add to Home Screen** gives an Invoice Maker icon that
+opens full screen and works offline (`manifest.webmanifest`, `sw.js`, `apple-touch-icon.png`). The **iPhone app**
+item on the site shows these steps. On iPhone, CSV and backup files open the share sheet (Save to Files).
+A native App Store build needs a Mac with Xcode and an Apple Developer account, so it is not in this repo.
+
 ## Android app
 
 `android/` wraps the same `public/index.html` in a small native app (package `app.invoicemaker`).
