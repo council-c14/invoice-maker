@@ -84,7 +84,7 @@ h1,h2,h3{margin:0;font-weight:600;letter-spacing:-.01em}
 .side-foot{margin-top:auto;padding:8px 10px;font-size:11px;color:var(--faint)}
 main{padding:28px 36px 64px;min-width:0;max-width:1240px}
 
-.page-head{display:flex;align-items:flex-end;justify-content:space-between;gap:16px;margin-bottom:22px;flex-wrap:wrap}
+.page-head{display:flex;align-items:flex-end;justify-content:space-between;gap:16px;margin-bottom:22px;flex-wrap:wrap;position:relative;z-index:6}
 .page-head h1{font-size:22px}
 .page-head .sub{color:var(--muted);margin-top:2px}
 .crumb{font-size:12px;color:var(--muted);margin-bottom:4px}
@@ -201,7 +201,7 @@ dialog{border:0;border-radius:10px;padding:0;width:min(520px,calc(100% - 32px));
 .dlg-body{padding:18px 20px;display:grid;gap:14px}
 .dlg-foot{padding:12px 20px;border-top:1px solid var(--line);display:flex;justify-content:flex-end;gap:8px;background:var(--subtle);border-radius:0 0 10px 10px}
 .err{color:var(--danger);font-size:13px}
-#toast{position:fixed;left:50%;bottom:24px;transform:translate(-50%,20px);background:var(--ink);color:var(--on-ink);padding:9px 14px;border-radius:6px;font-size:13px;opacity:0;pointer-events:none;transition:.18s}
+#toast{position:fixed;z-index:40;left:50%;bottom:24px;transform:translate(-50%,20px);background:var(--ink);color:var(--on-ink);padding:9px 14px;border-radius:6px;font-size:13px;opacity:0;pointer-events:none;transition:.18s}
 #toast.show{opacity:1;transform:translate(-50%,0)}
 
 /* Document preview */
@@ -464,7 +464,7 @@ html.theme-change *{transition:background-color .25s var(--ease),border-color .2
 .btn:active,.icon-x:active{transform:scale(.97)}
 .nav a:active{transform:scale(.98)}
 .t td{transition:background-color .14s var(--ease)}
-main.enter > *{animation:rise .42s var(--ease) both}
+main.enter > *{animation:rise .42s var(--ease) backwards}
 main.enter > :nth-child(2){animation-delay:.04s}
 main.enter > :nth-child(3){animation-delay:.08s}
 main.enter > :nth-child(4){animation-delay:.12s}
@@ -654,7 +654,7 @@ function syncWidget(state) {
     const cur = { ...DEFAULTS, ...state.settings }.currency, month = today().slice(0, 7);
     const billed = state.docs.filter(d => d.type === 'invoice' && !['draft', 'void'].includes(d.status));
     const open = billed.filter(d => ['sent', 'partial', 'overdue'].includes(status(d)))
-      .map(d => `${d.due || d.date}|${totals(d).balance.toFixed(2)}`).join(';');
+      .map(d => `${d.due || ''}|${totals(d).balance.toFixed(2)}`).join(';');
     const collected = sum(billed.flatMap(d => d.payments || []).filter(p => String(p.date).startsWith(month)), p => p.amount);
     const monthName = new Date().toLocaleDateString('en-GB', { month: 'long' });
     const synced = new Date().toLocaleDateString('en-GB', { day: 'numeric', month: 'short' });
@@ -741,7 +741,7 @@ const BUCKETS = ['Current', '1–30 days', '31–60 days', '61–90 days', '90+ 
 function aging(docs) {
   const b = [0, 0, 0, 0, 0];
   for (const d of docs.filter(isOpen)) {
-    const late = daysBetween(d.due || d.date, today());
+    const late = d.due ? daysBetween(d.due, today()) : 0; // no due date: never overdue, as in status()
     const i = late <= 0 ? 0 : late <= 30 ? 1 : late <= 60 ? 2 : late <= 90 ? 3 : 4;
     b[i] = r2(b[i] + totals(d).balance);
   }
@@ -913,7 +913,7 @@ function renderDoc(d, tpl = d.template, c = cust(d.customerId)) {
       </table></div>
     </div>
     <div class="parties"><div><h4>${q ? 'Quotation for' : 'Bill to'}</h4>${billTo(c)}</div>
-      <div class="due"><h4>${amountLabel}</h4><b>${money(amount)}</b>${q ? '' : `<span style="color:#6b6b66;font-size:9pt">by ${fmtDate(d.due)}</span>`}</div></div>
+      <div class="due"><h4>${amountLabel}</h4><b>${money(amount)}</b>${q || !d.due ? '' : `<span style="color:#6b6b66;font-size:9pt">by ${fmtDate(d.due)}</span>`}</div></div>
     ${itemsTable(d)}${totalsWithSign(d)}${notesBlock(d)}
     ${stamp(d)}
     <div class="foot">${[s.name, s.phone, s.email, s.website].filter(Boolean).map(esc).join('  ·  ')}</div>
